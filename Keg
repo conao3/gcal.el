@@ -1,0 +1,9 @@
+;; Keg
+
+(source gnu melpa)
+
+(package
+ (gcal
+  (recipe . (gcal :fetcher github :repo "conao3/gcal.el"))))
+
+(dev-dependency cort)

@@ -1,2 +1,5 @@
-gcal-my-test.el
+## .gitignore
+
+*-autoloads.el
 *.elc
+/.keg
