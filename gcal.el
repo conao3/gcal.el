@@ -166,8 +166,9 @@ Optional:
         (url-request-extra-headers headers)
         (url-request-data req-body))
     (with-current-buffer (url-retrieve-synchronously (gcal-http-make-query-url url params))
-      (gcal-http-parse-response-buffer)
-      (kill-buffer))))
+      (unwind-protect
+          (gcal-http-parse-response-buffer)
+        (kill-buffer)))))
 
 ;;; request wrapper
 
