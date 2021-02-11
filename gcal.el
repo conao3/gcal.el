@@ -100,10 +100,6 @@
           (forward-line)
           (setq body (buffer-substring (point) (point-max)))
 
-          ;; Result
-          ;; (push (cons ":Body" body) headers)
-          ;; (push (cons ":Status" status) headers)
-          ;; (push (cons ":Message" message) headers)
           (list status message headers body)))))
 
 (defun gcal-http (method url params headers data)
