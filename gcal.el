@@ -101,6 +101,11 @@
 
         (list status message headers body)))))
 
+(defun gcal-http-make-query-url (url params)
+  "Build url with query string. (ex:http://example.com/?a=1&b=2&c=3)"
+  (let* ((query (gcal-http-make-query params)))
+    (if (> (length query) 0) (concat url "?" query) url)))
+
 (defun gcal-http (method url params headers data)
   "Request URL via METHOD with PARAMS HEADERS DATA and parse response."
   (let ((url-request-method (or method "GET"))
@@ -172,11 +177,6 @@ json-read-from-string)."
         "&")))
    params
    "&"))
-
-(defun gcal-http-make-query-url (url params)
-  "Build url with query string. (ex:http://example.com/?a=1&b=2&c=3)"
-  (let* ((query (gcal-http-make-query params)))
-    (if (> (length query) 0) (concat url "?" query) url)))
 
 
 ;; OAuth
