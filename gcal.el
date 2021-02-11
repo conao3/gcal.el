@@ -157,6 +157,18 @@ Example:
 
       (list code status (nreverse headers) body))))
 
+(defun gcal-http-response-to-json (response)
+  "Convert HTTP RESPONSE to parsed JSON object."
+  (let ((status (nth 0 response))
+        (body (nth 3 response)))
+    (cond
+     ((= status 204) nil)               ; 204 No Content
+     (t
+      (let ((json-array-type 'list))
+        (json-read-from-string (decode-coding-string body 'utf-8)))))))
+
+;;; request wrapper
+
 (defun gcal-http-request (method url &optional params headers req-body)
   "Request URL via METHOD and parse response.
 
@@ -172,8 +184,6 @@ Optional:
       (unwind-protect
           (gcal-http-parse-response-buffer)
         (kill-buffer)))))
-
-;;; request wrapper
 
 (defun gcal-http-request-json (method url params json)
   "Send request via METHOD (with PARAMS and JSON BODY) to URL."
@@ -192,16 +202,6 @@ Optional:
     (gcal-http-make-query-string params)))
 
 ;;; request/response wrapper
-
-(defun gcal-http-response-to-json (response)
-  "Convert HTTP RESPONSE to parsed JSON object."
-  (let ((status (nth 0 response))
-        (body (nth 3 response)))
-    (cond
-     ((= status 204) nil)               ; 204 No Content
-     (t
-      (let ((json-array-type 'list))
-        (json-read-from-string (decode-coding-string body 'utf-8)))))))
 
 (defun gcal-retrieve-json-request (method url params &optional headers req-body)
   "Send HTTP request and return JSON object.
