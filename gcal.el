@@ -168,6 +168,8 @@ Optional:
     (gcal-parse-http-response
      (url-retrieve-synchronously (gcal-http-make-query-url url params)))))
 
+;;; request wrapper
+
 (defun gcal-http-get (url params)
   "Send GET request to URL with PARAMS."
   (gcal-http "GET" url params))
@@ -185,6 +187,8 @@ Optional:
     nil
     '(("Content-Type" . "application/x-www-form-urlencoded"))
     (gcal-http-make-query-string params)))
+
+;;; request/response wrapper
 
 (defun gcal-http-response-to-json (response)
   "Convert HTTP RESPONSE to parsed JSON object."
