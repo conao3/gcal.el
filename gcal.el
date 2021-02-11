@@ -93,7 +93,7 @@
           ;; Header Lines
           (while (not (eolp))
             (if (looking-at "^\\([^:]+\\): \\(.*\\)$")
-                (push (cons (match-string 1) (match-string 2)) headers))
+                (push `((match-string 1) . (match-string 2)) headers))
             (forward-line))
 
           ;; Body
