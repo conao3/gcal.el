@@ -442,7 +442,7 @@ Example:
 
 
 (defun gcal-gtime (y m d &optional hh mm)
-  (gcal-time-to-gtime (gcal-time-from-ymdhm y m d hh mm) (null hh)))
+  (gcal-time-to-gtime (gcal-time-from-ymdhm y m d hh mm) (not hh)))
 
 
 (defun gcal-datetime (y m d &optional hh mm)
@@ -481,10 +481,10 @@ Example:
     (cdr (assq 'code (cdr (assq 'error response-json))))))
 
 (defun gcal-succeeded-p (response-json)
-  (null (gcal-get-error-code response-json)))
+  (not (gcal-get-error-code response-json)))
 
 (defun gcal-failed-p (response-json)
-  (not (null (gcal-get-error-code response-json))))
+  (not (not (gcal-get-error-code response-json))))
 
 (provide 'gcal)
 ;;; gcal.el ends here
