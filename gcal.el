@@ -126,7 +126,7 @@
 
 (defun gcal-http (method url params headers data)
   "Request URL via METHOD with PARAMS HEADERS DATA and parse response."
-  (let ((url-request-method (or method "GET"))
+  (let ((url-request-method method)
         (url-request-extra-headers headers)
         (url-request-data data))
     (gcal-parse-http-response
