@@ -319,20 +319,20 @@ Arguments:
   (concat
    gcal-calendar-url
    "/users/me/calendarList"
-   (if calendar-id (concat "/" calendar-id))))
+   (when calendar-id (concat "/" calendar-id))))
 
 (defun gcal-calendars-url (&optional calendar-id suffix)
   (concat
    gcal-calendar-url
    "/calendars"
-   (if calendar-id (concat "/" calendar-id))
-   (if suffix (concat "/" suffix))))
+   (when calendar-id (concat "/" calendar-id))
+   (when suffix (concat "/" suffix))))
 
 (defun gcal-events-url (calendar-id &optional suffix1 suffix2)
   (concat
    (gcal-calendars-url calendar-id "events")
-   (if suffix1 (concat "/" suffix1))
-   (if suffix2 (concat "/" suffix2))))
+   (when suffix1 (concat "/" suffix1))
+   (when suffix2 (concat "/" suffix2))))
 
 
 ;; API Wrapper
@@ -437,8 +437,8 @@ Example:
     (cons
      (if date-only 'dateTime 'date)
      nil))
-   (if-let ((name (gcal-time-zone-name-default)))
-       (list (cons 'timeZone name)))))
+   (when-let ((name (gcal-time-zone-name-default)))
+     (list (cons 'timeZone name)))))
 
 
 (defun gcal-gtime (y m d &optional hh mm)
@@ -470,15 +470,15 @@ Example:
         (let ((d (parse-time-string date)))
           (encode-time 0 0 0 (nth 3 d)(nth 4 d)(nth 5 d)))
       (let ((datetime (gcal-gtime-date-time-str gtime)))
-        (if (stringp datetime)
-            (gcal-time-parse datetime))))))
+        (when (stringp datetime)
+          (gcal-time-parse datetime))))))
 
 
 ;; Utilities
 
 (defun gcal-get-error-code (response-json)
-  (if (listp response-json)
-      (cdr (assq 'code (cdr (assq 'error response-json))))))
+  (when (listp response-json)
+    (cdr (assq 'code (cdr (assq 'error response-json))))))
 
 (defun gcal-succeeded-p (response-json)
   (null (gcal-get-error-code response-json)))
