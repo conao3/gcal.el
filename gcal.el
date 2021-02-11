@@ -102,7 +102,7 @@
         (list status message headers body)))))
 
 (defun gcal-http-make-query-url (url params)
-  "Build url with query string. (ex:http://example.com/?a=1&b=2&c=3)"
+  "Build URL with query PARAMS."
   (let* ((query (gcal-http-make-query params)))
     (if (> (length query) 0) (concat url "?" query) url)))
 
