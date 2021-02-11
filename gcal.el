@@ -362,7 +362,8 @@ Arguments:
   "Events: quickAdd"
   (gcal-retrieve-json-post-json
    (gcal-events-url calendar-id "quickAdd")
-   (append (gcal-access-token-params) params `(("text" . ,text))) nil))
+   (append (gcal-access-token-params) params `(("text" . ,text)))
+   nil))
 
 (defun gcal-events-insert (calendar-id event-data &optional params)
   "Events: insert
@@ -399,7 +400,7 @@ Example:
   (gcal-retrieve-json
    "DELETE"
    (gcal-events-url calendar-id event-id)
-   (append (gcal-access-token-params) params) ))
+   (append (gcal-access-token-params) params)))
 
 
 ;; Time Utilities
