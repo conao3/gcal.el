@@ -207,10 +207,12 @@ See `gcal-http' for URL PARAMS METHOD docstring."
 (defun gcal-oauth-get (token auth-url token-url client-id client-secret scope token-file)
   "Get oauth token.
 
-  (if (= (length gcal-client-id) 0) (error "gcal-client-id is empty."))
-  (if (= (length gcal-client-secret) 0) (error "gcal-client-secret is empty."))
 Arguments:
   TOKEN AUTH-URL TOKEN-URL CLIENT-ID CLIENT-SECRET SCOPE TOKEN-FILE"
+  (when (= (length gcal-client-id) 0)
+    (error "`gcal-client-id' is empty"))
+  (when (= (length gcal-client-secret) 0)
+    (error "`gcal-client-secret' is empty"))
 
   ;; load from token-file
   (if (null token)
