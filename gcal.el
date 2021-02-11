@@ -154,12 +154,17 @@ Example:
 
       (list code status (nreverse headers) body))))
 
-(defun gcal-http (method url &optional params headers data)
-  "Request URL via METHOD with PARAMS HEADERS DATA and parse response."
+(defun gcal-http (method url &optional params headers req-body)
+  "Request URL via METHOD and parse response.
+
+Optional:
+  PARAMS alist: URL query
+  HEADERS alist: Extra request headers
+  REQ-BODY string: Request body"
   (declare (indent 2))
   (let ((url-request-method method)
         (url-request-extra-headers headers)
-        (url-request-data data))
+        (url-request-data req-body))
     (gcal-parse-http-response
      (url-retrieve-synchronously (gcal-http-make-query-url url params)))))
 
