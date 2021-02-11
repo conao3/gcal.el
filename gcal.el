@@ -258,7 +258,7 @@ See `gcal-http' for URL PARAMS docstring."
                (:copier nil))
   access expires refresh url)
 
-(defun gcal-oauth-auth (auth-url token-url client-id client-secret scope)
+(defun gcal-oauth-get (auth-url token-url client-id client-secret scope)
   "Get oauth token, return `gcal-oauth-token'.
 
 Argumemnts:
@@ -291,7 +291,7 @@ Argumemnts:
 (defun gcal-oauth-refresh (token token-url client-id client-secret)
   "Refresh TOKEN, return `gcal-oauth-token'.
 
-See `gcal-oauth-auth' for TOKEN-URL CLIENT-ID CLIENT-SECRET."
+See `gcal-oauth-get' for TOKEN-URL CLIENT-ID CLIENT-SECRET."
   (when token
     (let ((result (gcal-retrieve-json-post-www-form token-url
                     `(("client_id" . ,client-id)
@@ -328,7 +328,7 @@ Arguments:
    (gcal-oauth-load-token token-file)
    (let ((token (or
                  (gcal-oauth-refresh token token-url client-id client-secret)
-                 (gcal-oauth-auth auth-url token-url client-id client-secret scope))))
+                 (gcal-oauth-get auth-url token-url client-id client-secret scope))))
      (gcal-oauth-save-token token-file token)
      token)))
 
@@ -338,6 +338,7 @@ Arguments:
 (defvar gcal-oauth-token nil)
 
 (defun gcal-access-token ()
+  "Get Google Calendar access token."
   (setq gcal-oauth-token
         (gcal-oauth-token gcal-oauth-token
                           gcal-auth-url
@@ -349,6 +350,7 @@ Arguments:
   (gcal-oauth-token-access gcal-oauth-token))
 
 (defun gcal-access-token-params ()
+  "Get Google Calendar access token param."
   `(("access_token" . ,(gcal-access-token))))
 
 
