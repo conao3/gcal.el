@@ -209,9 +209,9 @@ See `gcal-http' for URL PARAMS METHOD docstring."
 
 Arguments:
   TOKEN AUTH-URL TOKEN-URL CLIENT-ID CLIENT-SECRET SCOPE TOKEN-FILE"
-  (when (= (length gcal-client-id) 0)
+  (when (string-empty-p gcal-client-id)
     (error "`gcal-client-id' is empty"))
-  (when (= (length gcal-client-secret) 0)
+  (when (string-empty-p gcal-client-secret)
     (error "`gcal-client-secret' is empty"))
 
   ;; load from token-file
