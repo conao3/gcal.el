@@ -98,22 +98,27 @@ Like xxxxxxxxxxxxxxxxxxxxxxxx"
   "Parse HTTP response BUF."
   (with-current-buffer buf
     (goto-char (point-min))
-    (when (looking-at "^HTTP/[^ ]+ \\([0-9]+\\) ?\\(.*\\)$") ; HTTP/1.1 200 OK
-      (let ((status (string-to-number (match-string 1)))
-            (message (match-string 2))
-            headers body)
-        ;; headers
-        (forward-line)
-        (while (not (eolp))
-          (when (looking-at "^\\([^:]+\\): \\(.*\\)$")       ; Content-Length: 2134
-            (push `(,(match-string 1) . ,(match-string 2)) headers))
-          (forward-line))
 
-        ;; body
-        (forward-line)
-        (setq body (buffer-substring (point) (point-max)))
+    (let (code status headers body)
+      ;; HTTP/1.1 200 OK
+      (looking-at "^HTTP/[^ ]+ \\([0-9]+\\) ?\\(.*\\)$")
+      (setq code (match-string 1))
+      (setq status (match-string 2))
 
-        (list status message (nreverse headers) body)))))
+      ;; headers
+      ;; Content-Type: application/json; charset=UTF-8
+      ;; Content-Length: 2134
+      (forward-line)
+      (while (not (eolp))
+        (when (looking-at "^\\([^:]+\\): \\(.*\\)$")
+          (push `(,(match-string 1) . ,(match-string 2)) headers))
+        (forward-line))
+      
+      ;; body
+      (forward-line)
+      (setq body (buffer-substring (point) (point-max)))
+
+      (list code status (nreverse headers) body))))
 
 (defun gcal-http-make-query (params)
   "Build query string from PARAMS."
