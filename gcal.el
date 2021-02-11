@@ -215,19 +215,19 @@ See `gcal-http' for URL PARAMS docstring."
   (gcal-http-response-to-json
    (gcal-http-get url params)))
 
-(defun gcal-retrieve-json-post-www-form (url params)
-  "Send HTTP POST request (x-www-form-url-encoded) and return JSON object.
-
-See `gcal-http' for URL PARAMS docstring."
-  (gcal-http-response-to-json
-   (gcal-http-post-www-form url params)))
-
 (defun gcal-retrieve-json-post-json (url params json &optional method)
   "Send HTTP POST request (with encoded JSON string) and return JSON object.
 
 See `gcal-http' for URL PARAMS METHOD docstring."
   (gcal-http-response-to-json
    (gcal-http-post-json url params json method)))
+
+(defun gcal-retrieve-json-post-www-form (url params)
+  "Send HTTP POST request (x-www-form-url-encoded) and return JSON object.
+
+See `gcal-http' for URL PARAMS docstring."
+  (gcal-http-response-to-json
+   (gcal-http-post-www-form url params)))
 
 
 ;;;; OAuth
