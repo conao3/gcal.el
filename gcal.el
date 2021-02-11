@@ -64,12 +64,16 @@
   :link '(url-link :tag "Github" "https://github.com/conao3/gcal.el"))
 
 (defcustom gcal-client-id ""
-  "Google Calendar API client-id."
+  "Google Calendar API client-id.
+
+Like 000000000000-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.apps.googleusercontent.com"
   :group 'gcal
   :type 'string)
 
 (defcustom gcal-client-secret ""
-  "Google Calendar API client-secret."
+  "Google Calendar API client-secret.
+
+Like xxxxxxxxxxxxxxxxxxxxxxxx"
   :group 'gcal
   :type 'string)
 
