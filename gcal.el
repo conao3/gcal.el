@@ -204,61 +204,6 @@ See `gcal-http' for URL PARAMS METHOD docstring."
 
 (cl-defstruct gcal-oauth-token access expires refresh url)
 
-(defun gcal-oauth-get (token auth-url token-url client-id client-secret scope token-file)
-  "Get oauth token.
-
-Arguments:
-  TOKEN AUTH-URL TOKEN-URL CLIENT-ID CLIENT-SECRET SCOPE TOKEN-FILE"
-  (when (string-empty-p gcal-client-id)
-    (error "`gcal-client-id' is empty"))
-  (when (string-empty-p gcal-client-secret)
-    (error "`gcal-client-secret' is empty"))
-
-  ;; load from token-file
-  (when (null token)
-    (setq token (gcal-oauth-load-token token-file)))
-
-  ;; refresh token
-  (when (and token
-             (time-less-p (gcal-oauth-token-expires token) (current-time)))
-    (setq token (gcal-oauth-refresh token client-id client-secret token-url))
-    (gcal-oauth-save-token token-file token))
-
-  ;; new token
-  (when (null token)
-    (setq token (gcal-oauth-auth auth-url token-url client-id client-secret scope))
-    (gcal-oauth-save-token token-file token))
-
-  token)
-
-(defun gcal-oauth-auth (auth-url token-url client-id client-secret scope)
-  "OAuthによりアクセストークンを取得します。gcal-oauth-token構造体を返します。"
-  (let* ((result (gcal-oauth-get-access-token auth-url token-url client-id client-secret scope))
-         (access-token (cdr (assq 'access_token result)))
-         (expires-in (cdr (assq 'expires_in result)))
-         (refresh-token (cdr (assq 'refresh_token result)))
-         (expires (time-add (current-time) (seconds-to-time expires-in))))
-    (make-gcal-oauth-token
-     :access access-token
-     :expires expires
-     :refresh refresh-token
-     :url token-url)))
-
-(defun gcal-oauth-refresh (token client-id client-secret &optional token-url)
-  "gcal-oauth-token構造体のアクセストークンをリフレッシュします。"
-  (let* ((result (gcal-oauth-get-refresh-token
-                  (gcal-oauth-token-refresh token)
-                  (or token-url (gcal-oauth-token-url token))
-                  client-id client-secret))
-         (access-token (cdr (assq 'access_token result)))
-         (expires-in (cdr (assq 'expires_in result)))
-         (expires (time-add (current-time) (seconds-to-time expires-in))))
-    (when (and access-token expires)
-      (setf (gcal-oauth-token-access token) access-token)
-      (setf (gcal-oauth-token-expires token) expires)))
-  token)
-
-;; implementation details
 (defun gcal-oauth-get-access-token (auth-url token-url client-id client-secret scope)
   "アクセストークンを取得します。JSONをリストへ変換したもので返します。"
   (gcal-retrieve-json-post-www-form
@@ -290,6 +235,33 @@ Arguments:
      ("grant_type" . "refresh_token")
      ("refresh_token" . ,refresh-token))))
 
+(defun gcal-oauth-auth (auth-url token-url client-id client-secret scope)
+  "OAuthによりアクセストークンを取得します。gcal-oauth-token構造体を返します。"
+  (let* ((result (gcal-oauth-get-access-token auth-url token-url client-id client-secret scope))
+         (access-token (cdr (assq 'access_token result)))
+         (expires-in (cdr (assq 'expires_in result)))
+         (refresh-token (cdr (assq 'refresh_token result)))
+         (expires (time-add (current-time) (seconds-to-time expires-in))))
+    (make-gcal-oauth-token
+     :access access-token
+     :expires expires
+     :refresh refresh-token
+     :url token-url)))
+
+(defun gcal-oauth-refresh (token client-id client-secret &optional token-url)
+  "gcal-oauth-token構造体のアクセストークンをリフレッシュします。"
+  (let* ((result (gcal-oauth-get-refresh-token
+                  (gcal-oauth-token-refresh token)
+                  (or token-url (gcal-oauth-token-url token))
+                  client-id client-secret))
+         (access-token (cdr (assq 'access_token result)))
+         (expires-in (cdr (assq 'expires_in result)))
+         (expires (time-add (current-time) (seconds-to-time expires-in))))
+    (when (and access-token expires)
+      (setf (gcal-oauth-token-access token) access-token)
+      (setf (gcal-oauth-token-expires token) expires)))
+  token)
+
 (defun gcal-oauth-save-token (file token)
   (if (and file token)
       (with-temp-file file
@@ -301,6 +273,33 @@ Arguments:
         (with-temp-buffer
           (insert-file-contents file)
           (read (buffer-string))))))
+
+(defun gcal-oauth-get (token auth-url token-url client-id client-secret scope token-file)
+  "Get oauth token.
+
+Arguments:
+  TOKEN AUTH-URL TOKEN-URL CLIENT-ID CLIENT-SECRET SCOPE TOKEN-FILE"
+  (when (string-empty-p gcal-client-id)
+    (error "`gcal-client-id' is empty"))
+  (when (string-empty-p gcal-client-secret)
+    (error "`gcal-client-secret' is empty"))
+
+  ;; load from token-file
+  (when (null token)
+    (setq token (gcal-oauth-load-token token-file)))
+
+  ;; refresh token
+  (when (and token
+             (time-less-p (gcal-oauth-token-expires token) (current-time)))
+    (setq token (gcal-oauth-refresh token client-id client-secret token-url))
+    (gcal-oauth-save-token token-file token))
+
+  ;; new token
+  (when (null token)
+    (setq token (gcal-oauth-auth auth-url token-url client-id client-secret scope))
+    (gcal-oauth-save-token token-file token))
+
+  token)
 
 
 ;; Google Calendar OAuth
