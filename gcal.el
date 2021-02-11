@@ -105,15 +105,14 @@
   "Build query string from PARAMS."
   (mapconcat
    (lambda (kv)
-     (let* ((key (car kv))
-            (v (cdr kv))
-            (values (if (listp v) v (list v))))
+     (let ((key (car kv))
+           (v (cdr kv)))
        (mapconcat
         (lambda (value)
           (format "%s=%s"
-        values
                   (url-hexify-string (format "%s" key))
                   (url-hexify-string (format "%s" value))))
+        (if (listp v) v (list v))
         "&")))
    params
    "&"))
