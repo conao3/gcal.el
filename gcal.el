@@ -232,16 +232,6 @@ See `gcal-http' for URL PARAMS METHOD docstring."
 
 ;;;; OAuth
 
-;; (この部分は一応Google Calendar以外でも使い回せるように作っています)
-
-;; Example: (setq token (gcal-oauth-token nil "https://accounts.google.com/o/oauth2/auth" "https://www.googleapis.com/oauth2/v3/token" "xxx.apps.googleusercontent.com" "secret_xxx" "https://www.googleapis.com/auth/calendar"))
-;; Example: (gcal-oauth-token-access token)
-;; Example: (gcal-oauth-token-expires token)
-;; Example: (gcal-oauth-token-refresh token)
-;; Example: (gcal-oauth-token-url token)
-;; Example: (gcal-oauth-auth "https://accounts.google.com/o/oauth2/auth" "https://www.googleapis.com/oauth2/v3/token" "xxx.apps.googleusercontent.com" "secret_xxx" "https://www.googleapis.com/auth/calendar"))
-;; Example: (gcal-oauth-refresh token "xxxx" "xxxx")
-
 (cl-defstruct (gcal-oauth-token
                (:constructor gcal-oauth-token-new)
                (:copier nil))
