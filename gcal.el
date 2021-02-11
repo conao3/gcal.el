@@ -157,7 +157,7 @@
         (body (nth 3 response)))
     ;; @todo check status
     (cond
-     ((= status 204) nil) ; empty result
+     ((= status 204) nil)               ; 204 No Content
      (t
       (json-read-from-string (decode-coding-string body 'utf-8))))))
 
