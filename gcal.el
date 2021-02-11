@@ -237,15 +237,13 @@ See `gcal-http' for URL PARAMS METHOD docstring."
 
 (defun gcal-oauth-auth (auth-url token-url client-id client-secret scope)
   "OAuthによりアクセストークンを取得します。gcal-oauth-token構造体を返します。"
-  (let* ((result (gcal-oauth-get-access-token auth-url token-url client-id client-secret scope))
-         (access-token (cdr (assq 'access_token result)))
-         (expires-in (cdr (assq 'expires_in result)))
-         (refresh-token (cdr (assq 'refresh_token result)))
-         (expires (time-add (current-time) (seconds-to-time expires-in))))
+  (let ((result (gcal-oauth-get-access-token auth-url token-url client-id client-secret scope)))
     (make-gcal-oauth-token
-     :access access-token
-     :expires expires
-     :refresh refresh-token
+     :access (alist-get 'access_token result)
+     :expires (time-add
+               (current-time)
+               (seconds-to-time (alist-get 'expires_in result)))
+     :refresh (alist-get 'refreshtoken result)
      :url token-url)))
 
 (defun gcal-oauth-refresh (token client-id client-secret &optional token-url)
