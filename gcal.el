@@ -87,8 +87,7 @@
     (when (looking-at "^HTTP/[^ ]+ \\([0-9]+\\) ?\\(.*\\)$")
       (let ((status (string-to-number (match-string 1)))
             (message (match-string 2))
-            (headers)
-            (body))
+            headers body)
         ;; headers
         (forward-line)
         (while (not (eolp))
