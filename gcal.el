@@ -205,7 +205,7 @@ See `gcal-http' for URL PARAMS METHOD docstring."
 (cl-defstruct gcal-oauth-token access expires refresh url)
 
 (defun gcal-oauth-get-access-token (auth-url token-url client-id client-secret scope)
-  "アクセストークンを取得します。JSONをリストへ変換したもので返します。"
+  "Get access-token."
   (gcal-retrieve-json-post-www-form
    token-url
    `(("client_id" . ,client-id)
@@ -223,7 +223,7 @@ See `gcal-http' for URL PARAMS METHOD docstring."
                   (read-string "Enter the authentication code your browser displayed: "))))))
 
 (defun gcal-oauth-get-refresh-token (refresh-token token-url client-id client-secret)
-  "リフレッシュされたアクセストークンを取得します。JSONをリストへ変換したもので返します。"
+  "Get access-token using REFRESH-TOKEN."
   (gcal-retrieve-json-post-www-form
    token-url
    `(("client_id" . ,client-id)
@@ -233,7 +233,7 @@ See `gcal-http' for URL PARAMS METHOD docstring."
      ("refresh_token" . ,refresh-token))))
 
 (defun gcal-oauth-auth (auth-url token-url client-id client-secret scope)
-  "OAuthによりアクセストークンを取得します。gcal-oauth-token構造体を返します。"
+  "Get access-token"
   (let ((result (gcal-oauth-get-access-token auth-url token-url client-id client-secret scope)))
     (let-alist result
       (make-gcal-oauth-token
@@ -243,7 +243,7 @@ See `gcal-http' for URL PARAMS METHOD docstring."
        :url token-url))))
 
 (defun gcal-oauth-refresh (token client-id client-secret &optional token-url)
-  "gcal-oauth-token構造体のアクセストークンをリフレッシュします。"
+  "Refresh token for gcal-oauth-token."
   (let* ((result (gcal-oauth-get-refresh-token
                   (gcal-oauth-token-refresh token)
                   (or token-url (gcal-oauth-token-url token))
