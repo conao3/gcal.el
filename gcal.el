@@ -456,11 +456,11 @@ Example:
 
 (defun gcal-gtime-date-str (gtime)
   "ex: ((date . \"2016-05-28\")) => \"2016-05-28\" or nil"
-  (cdr (assq 'date gtime)))
+  (alist-get 'date gtime))
 
 (defun gcal-gtime-date-time-str (gtime)
   "ex: ((dateTime . \"2009-10-25T11:00:54+09:00\")) => \"2009-10-25T11:00:54+09:00\" or nil"
-  (cdr (assq 'dateTime gtime)))
+  (alist-get 'dateTime gtime))
 
 (defun gcal-time-from-gtime (gtime)
   (let ((date (gcal-gtime-date-str gtime)))
@@ -476,7 +476,7 @@ Example:
 
 (defun gcal-get-error-code (response-json)
   (when (listp response-json)
-    (cdr (assq 'code (cdr (assq 'error response-json))))))
+    (let-alist response-json .error.code)))
 
 (defun gcal-succeeded-p (response-json)
   (not (gcal-get-error-code response-json)))
