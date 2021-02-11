@@ -205,10 +205,12 @@ See `gcal-http' for URL PARAMS METHOD docstring."
 (cl-defstruct gcal-oauth-token access expires refresh url)
 
 (defun gcal-oauth-get (token auth-url token-url client-id client-secret scope token-file)
-  "アクセストークンを取得します。必要なら認証やリフレッシュを行います。"
+  "Get oauth token.
 
   (if (= (length gcal-client-id) 0) (error "gcal-client-id is empty."))
   (if (= (length gcal-client-secret) 0) (error "gcal-client-secret is empty."))
+Arguments:
+  TOKEN AUTH-URL TOKEN-URL CLIENT-ID CLIENT-SECRET SCOPE TOKEN-FILE"
 
   ;; load from token-file
   (if (null token)
