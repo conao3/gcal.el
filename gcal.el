@@ -172,7 +172,8 @@ Like xxxxxxxxxxxxxxxxxxxxxxxx"
     (cond
      ((= status 204) nil)               ; 204 No Content
      (t
-      (json-read-from-string (decode-coding-string body 'utf-8))))))
+      (let ((json-array-type 'list))
+        (json-read-from-string (decode-coding-string body 'utf-8)))))))
 
 (defun gcal-retrieve-json (method url params &optional headers data)
   "Send HTTP request and return JSON object.
