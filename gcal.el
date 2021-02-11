@@ -151,6 +151,18 @@
     '(("Content-Type" . "application/json"))
     (encode-coding-string (json-encode json) 'utf-8)))
 
+(defun gcal-http-response-to-json (response)
+  "Convert HTTP response(return value of gcal-http,
+gcal-parse-http-response) to parsed JSON object(by
+json-read-from-string)."
+  (let* ((status (nth 0 response))
+         (body (nth 3 response)))
+    ;; @todo check status
+    (cond
+     ((= status 204) nil) ; empty result
+     (t
+      (json-read-from-string (decode-coding-string body 'utf-8))))))
+
 (defun gcal-retrieve-json (method url params &optional headers data)
   "Send HTTP request and return parsed JSON object."
   (gcal-http-response-to-json (gcal-http method url params headers data)))
@@ -168,18 +180,6 @@ parsed JSON object."
   "Send HTTP POST request(with encoded JSON string) and return
 parsed JSON object."
   (gcal-http-response-to-json (gcal-http-post-json url params json-obj method)))
-
-(defun gcal-http-response-to-json (response)
-  "Convert HTTP response(return value of gcal-http,
-gcal-parse-http-response) to parsed JSON object(by
-json-read-from-string)."
-  (let* ((status (nth 0 response))
-         (body (nth 3 response)))
-    ;; @todo check status
-    (cond
-     ((= status 204) nil) ; empty result
-     (t
-      (json-read-from-string (decode-coding-string body 'utf-8))))))
 
 
 ;; OAuth
