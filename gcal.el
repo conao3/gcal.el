@@ -5,7 +5,7 @@
 ;; Author: AKIYAMA Kouhei <misohena@gmail.com>
 ;; Version: 0.9.0
 ;; Keywords: convenience
-;; Package-Requires: ((emacs "26.3"))
+;; Package-Requires: ((emacs "26.1"))
 ;; URL: https://github.com/misohena/gcal
 
 ;; This program is free software; you can redistribute it and/or modify
