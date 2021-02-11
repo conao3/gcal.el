@@ -93,7 +93,7 @@ Like xxxxxxxxxxxxxxxxxxxxxxxx"
 (defconst gcal-scope-url "https://www.googleapis.com/auth/calendar")
 
 
-;; HTTP
+;;;; HTTP
 
 (defun gcal-http-make-query-string (params)
   "Build query string from PARAMS.
@@ -225,7 +225,7 @@ See `gcal-http' for URL PARAMS METHOD docstring."
    (gcal-http-post-json url params json method)))
 
 
-;; OAuth
+;;;; OAuth
 
 ;; (この部分は一応Google Calendar以外でも使い回せるように作っています)
 
@@ -321,7 +321,7 @@ Arguments:
      token)))
 
 
-;; Google Calendar OAuth
+;;;; Google Calendar OAuth
 
 (defvar gcal-access-token nil)
 
@@ -340,7 +340,7 @@ Arguments:
   `(("access_token" . ,(gcal-access-token))))
 
 
-;; API URL Builder
+;;;; API URL Builder
 
 (defconst gcal-calendar-url "https://www.googleapis.com/calendar/v3")
 
@@ -364,7 +364,7 @@ Arguments:
    (when suffix2 (concat "/" suffix2))))
 
 
-;; API Wrapper
+;;;; API Wrapper
 
 ;; CalendarList
 
@@ -433,7 +433,7 @@ Example:
    (append (gcal-access-token-params) params)))
 
 
-;; Time Utilities
+;;;; Time Utilities
 
 ;; time = Emacs Internal Time
 ;;   (ex: (encode-time 0 0 0 31 4 2016) )
@@ -499,7 +499,7 @@ Example:
           (parse-iso8601-time-string datetime))))))
 
 
-;; Utilities
+;;;; utilities
 
 (defun gcal-get-error-code (response-json)
   (when (listp response-json)
