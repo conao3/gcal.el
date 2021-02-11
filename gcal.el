@@ -152,9 +152,7 @@
     (encode-coding-string (json-encode json) 'utf-8)))
 
 (defun gcal-http-response-to-json (response)
-  "Convert HTTP response(return value of gcal-http,
-gcal-parse-http-response) to parsed JSON object(by
-json-read-from-string)."
+  "Convert HTTP RESPONSE to parsed JSON object."
   (let* ((status (nth 0 response))
          (body (nth 3 response)))
     ;; @todo check status
