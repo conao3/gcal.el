@@ -149,10 +149,10 @@ Example:
 
 (defun gcal-http-make-query-url (url params)
   "Build URL with query PARAMS."
-  (let ((query (gcal-http-make-query-string params)))
-    (if (> (length query) 0)
-        (concat url "?" query)
-      url)))
+  (concat
+   url
+   (when params
+     (concat "?" (gcal-http-make-query-string params)))))
 
 (defun gcal-http (method url &optional params headers data)
   "Request URL via METHOD with PARAMS HEADERS DATA and parse response."
