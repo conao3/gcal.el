@@ -175,19 +175,6 @@ Optional:
 
 ;;; request wrapper
 
-(defun gcal-http-get (url params)
-  "Send GET request to URL with PARAMS."
-  (declare (indent 1))
-  (gcal-http-request "GET" url params))
-
-(defun gcal-http-post-json (url params json)
-  "Send POST request (with PARAMS and JSON BODY) to URL."
-  (declare (indent 1))
-  (gcal-http-request "POST" url
-    params
-    '(("Content-Type" . "application/json"))
-    (encode-coding-string (json-encode json) 'utf-8)))
-
 (defun gcal-http-request-json (method url params json)
   "Send request via METHOD (with PARAMS and JSON BODY) to URL."
   (declare (indent 2))
@@ -223,22 +210,6 @@ See `gcal-http' for METHOD URL PARAMS HEADERS REQ-BODY docstring."
   (declare (indent 2))
   (gcal-http-response-to-json
    (gcal-http-request method url params headers req-body)))
-
-(defun gcal-retrieve-json-get (url params)
-  "Send HTTP GET request and return JSON object.
-
-See `gcal-http' for URL PARAMS docstring."
-  (declare (indent 1))
-  (gcal-http-response-to-json
-   (gcal-http-get url params)))
-
-(defun gcal-retrieve-json-post-json (url params json)
-  "Send HTTP POST request (with encoded JSON string) and return JSON object.
-
-See `gcal-http' for URL PARAMS METHOD docstring."
-  (declare (indent 1))
-  (gcal-http-response-to-json
-   (gcal-http-post-json url params json)))
 
 (defun gcal-retrieve-json-request-json (method url params json)
   "Send request via METHOD (with PARAMS and JSON BODY) to URL."
