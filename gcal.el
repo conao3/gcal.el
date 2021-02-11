@@ -257,9 +257,8 @@ See `gcal-http' for URL PARAMS METHOD docstring."
   token)
 
 (defun gcal-oauth-save-token (file token)
-  (if (and file token)
-      (with-temp-file file
-        (pp token (current-buffer)))))
+  (with-temp-file file
+    (pp token (current-buffer))))
 
 (defun gcal-oauth-load-token (file)
   (if (and file (file-exists-p file))
