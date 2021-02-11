@@ -297,7 +297,6 @@ Arguments:
 (defvar gcal-access-token nil)
 
 (defun gcal-access-token ()
-  ;; get token
   (setq gcal-access-token
         (gcal-oauth-get gcal-access-token
                         gcal-auth-url
@@ -306,7 +305,6 @@ Arguments:
                         gcal-client-secret
                         gcal-scope-url
                         gcal-token-file))
-  ;; return current token
   (gcal-oauth-token-access gcal-access-token))
 
 (defun gcal-access-token-params ()
