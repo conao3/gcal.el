@@ -89,14 +89,14 @@
             (message (match-string 2))
             (headers)
             (body))
-        ;; Header Lines
+        ;; headers
         (forward-line)
         (while (not (eolp))
           (when (looking-at "^\\([^:]+\\): \\(.*\\)$")
             (push `((match-string 1) . (match-string 2)) headers))
           (forward-line))
 
-        ;; Body
+        ;; body
         (forward-line)
         (setq body (buffer-substring (point) (point-max)))
 
