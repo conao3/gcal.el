@@ -521,7 +521,6 @@ old-events will be destroyed."
 ;;                    (gcal-org-insert-string-after-headline
 ;;                     (gcal-oevent-format oevent) headline)))))))
 
-
 (defun gcal-org-pull-to-file (calendar-id
                               file headline cache-file
                               &optional params)
@@ -1160,7 +1159,6 @@ base32hexへ変換します。"
 (defun gcal-oevent-delete (calendar-id oevent)
   (gcal-events-delete calendar-id (gcal-oevent-gevent-id oevent)))
 
-
 (defun gcal-oevents-insert (calendar-id oevents)
   (loop for oevent in oevents
         do (gcal-oevent-insert calendar-id oevent)))
@@ -1221,7 +1219,6 @@ base32hexへ変換します。"
          (if (time-less-p t-start t-end-1) t-end-1 t-start) t))
     ts-end))
 
-
 (defun gcal-ts-to-gtime (ts)
   "Convert timestamp to Google Calendar's event time."
   (gcal-time-to-gtime (gcal-ts-to-time ts) (gcal-ts-date-only ts)))
@@ -1236,7 +1233,6 @@ base32hexへ変換します。"
             (list (nth 5 dect) (nth 4 dect) (nth 3 dect) nil nil)
           ;; date and time
           (list (nth 5 dect) (nth 4 dect) (nth 3 dect) (nth 2 dect) (nth 1 dect))))))
-
 
 (defun gcal-ts-equal-date (ts1 ts2)
   (and

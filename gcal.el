@@ -50,7 +50,6 @@
 ;;   ;; delete event
 ;;   (gcal-events-delete "example@gmail.com" "xxx{event id}xxx")
 
-
 ;;; Code:
 
 (require 'cl-lib)
@@ -440,10 +439,8 @@ Example:
    (when-let ((name (gcal-time-zone-name-default)))
      (list (cons 'timeZone name)))))
 
-
 (defun gcal-gtime (y m d &optional hh mm)
   (gcal-time-to-gtime (gcal-time-from-ymdhm y m d hh mm) (not hh)))
-
 
 (defun gcal-datetime (y m d &optional hh mm)
   (gcal-time-format (gcal-time-from-ymdhm y m d hh mm) nil))
