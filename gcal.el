@@ -262,8 +262,8 @@ See `gcal-http' for URL PARAMS METHOD docstring."
       (when (and .access_token .expires_in)
         (setf (gcal-oauth-token-access token) .access_token)
         (setf (gcal-oauth-token-expires token)
-              (time-add (current-time) (seconds-to-time .expires_in))))))
-  token)
+              (time-add (current-time) (seconds-to-time .expires_in)))
+        token))))
 
 (defun gcal-oauth-save-token (file token)
   "Save TOKEN into FILE."
