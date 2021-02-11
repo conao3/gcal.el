@@ -101,9 +101,27 @@
 
         (list status message headers body)))))
 
+(defun gcal-http-make-query (params)
+  "Build query string. (ex: a=1&b=2&c=3)"
+  (mapconcat
+   (lambda (kv)
+     (let* ((key (car kv))
+            (v (cdr kv))
+            (values (if (listp v) v (list v))))
+       (mapconcat
+        (lambda (value)
+          (concat
+           (url-hexify-string (format "%s" key))
+           "="
+           (url-hexify-string (format "%s" value))))
+        values
+        "&")))
+   params
+   "&"))
+
 (defun gcal-http-make-query-url (url params)
   "Build URL with query PARAMS."
-  (let* ((query (gcal-http-make-query params)))
+  (let ((query (gcal-http-make-query params)))
     (if (> (length query) 0) (concat url "?" query) url)))
 
 (defun gcal-http (method url params headers data)
@@ -159,24 +177,6 @@ json-read-from-string)."
      ((= status 204) nil) ; empty result
      (t
       (json-read-from-string (decode-coding-string body 'utf-8))))))
-
-(defun gcal-http-make-query (params)
-  "Build query string. (ex: a=1&b=2&c=3)"
-  (mapconcat
-   (lambda (kv)
-     (let* ((key (car kv))
-            (v (cdr kv))
-            (values (if (listp v) v (list v))))
-       (mapconcat
-        (lambda (value)
-          (concat
-           (url-hexify-string (format "%s" key))
-           "="
-           (url-hexify-string (format "%s" value))))
-        values
-        "&")))
-   params
-   "&"))
 
 
 ;; OAuth
