@@ -95,32 +95,6 @@ Like xxxxxxxxxxxxxxxxxxxxxxxx"
 
 ;; HTTP
 
-(defun gcal-parse-http-response (buf)
-  "Parse HTTP response BUF."
-  (with-current-buffer buf
-    (goto-char (point-min))
-
-    (let (code status headers body)
-      ;; HTTP/1.1 200 OK
-      (looking-at "^HTTP/[^ ]+ \\([0-9]+\\) ?\\(.*\\)$")
-      (setq code (match-string 1))
-      (setq status (match-string 2))
-
-      ;; headers
-      ;; Content-Type: application/json; charset=UTF-8
-      ;; Content-Length: 2134
-      (forward-line)
-      (while (not (eolp))
-        (when (looking-at "^\\([^:]+\\): \\(.*\\)$")
-          (push `(,(match-string 1) . ,(match-string 2)) headers))
-        (forward-line))
-      
-      ;; body
-      (forward-line)
-      (setq body (buffer-substring (point) (point-max)))
-
-      (list code status (nreverse headers) body))))
-
 (defun gcal-http-make-query-string (params)
   "Build query string from PARAMS.
 
@@ -153,6 +127,32 @@ Example:
    url
    (when params
      (concat "?" (gcal-http-make-query-string params)))))
+
+(defun gcal-parse-http-response (buf)
+  "Parse HTTP response BUF."
+  (with-current-buffer buf
+    (goto-char (point-min))
+
+    (let (code status headers body)
+      ;; HTTP/1.1 200 OK
+      (looking-at "^HTTP/[^ ]+ \\([0-9]+\\) ?\\(.*\\)$")
+      (setq code (match-string 1))
+      (setq status (match-string 2))
+
+      ;; headers
+      ;; Content-Type: application/json; charset=UTF-8
+      ;; Content-Length: 2134
+      (forward-line)
+      (while (not (eolp))
+        (when (looking-at "^\\([^:]+\\): \\(.*\\)$")
+          (push `(,(match-string 1) . ,(match-string 2)) headers))
+        (forward-line))
+      
+      ;; body
+      (forward-line)
+      (setq body (buffer-substring (point) (point-max)))
+
+      (list code status (nreverse headers) body))))
 
 (defun gcal-http (method url &optional params headers data)
   "Request URL via METHOD with PARAMS HEADERS DATA and parse response."
