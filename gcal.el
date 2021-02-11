@@ -91,6 +91,7 @@ Like xxxxxxxxxxxxxxxxxxxxxxxx"
 (defconst gcal-token-url "https://www.googleapis.com/oauth2/v3/token")
 (defconst gcal-scope-url "https://www.googleapis.com/auth/calendar")
 
+
 ;; HTTP
 
 (defun gcal-parse-http-response (buf)
