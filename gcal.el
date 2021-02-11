@@ -53,6 +53,7 @@
 
 ;;; Code:
 
+(require 'cl-lib)
 (require 'url)
 (require 'url-util)
 (require 'json)
@@ -201,7 +202,7 @@ See `gcal-http' for URL PARAMS METHOD docstring."
 ;; Example: (gcal-oauth-auth "https://accounts.google.com/o/oauth2/auth" "https://www.googleapis.com/oauth2/v3/token" "xxx.apps.googleusercontent.com" "secret_xxx" "https://www.googleapis.com/auth/calendar"))
 ;; Example: (gcal-oauth-refresh token "xxxx" "xxxx")
 
-(defstruct gcal-oauth-token access expires refresh url)
+(cl-defstruct gcal-oauth-token access expires refresh url)
 
 (defun gcal-oauth-get (token auth-url token-url client-id client-secret scope token-file)
   "アクセストークンを取得します。必要なら認証やリフレッシュを行います。"
