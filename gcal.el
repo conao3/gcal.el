@@ -273,7 +273,7 @@ See `gcal-http' for URL PARAMS METHOD docstring."
 (defun gcal-oauth-save-token (file token)
   "Save TOKEN into FILE."
   (with-temp-file file
-    (pp token (current-buffer))))
+    (insert (pp-to-string token))))
 
 (defun gcal-oauth-load-token (file)
   "Load token from FILE."
