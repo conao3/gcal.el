@@ -97,17 +97,16 @@ Like xxxxxxxxxxxxxxxxxxxxxxxx"
 (defun gcal-parse-http-response (buf)
   "Parse HTTP response BUF."
   (with-current-buffer buf
-    ;; Response Line (ex: HTTP/1.1 200 OK)
     (goto-char (point-min))
-    (when (looking-at "^HTTP/[^ ]+ \\([0-9]+\\) ?\\(.*\\)$")
+    (when (looking-at "^HTTP/[^ ]+ \\([0-9]+\\) ?\\(.*\\)$") ; HTTP/1.1 200 OK
       (let ((status (string-to-number (match-string 1)))
             (message (match-string 2))
             headers body)
         ;; headers
         (forward-line)
         (while (not (eolp))
-          (when (looking-at "^\\([^:]+\\): \\(.*\\)$")
             (push `((match-string 1) . (match-string 2)) headers))
+          (when (looking-at "^\\([^:]+\\): \\(.*\\)$")       ; Content-Length: 2134
           (forward-line))
 
         ;; body
