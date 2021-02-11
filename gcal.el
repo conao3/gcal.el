@@ -120,7 +120,9 @@
 (defun gcal-http-make-query-url (url params)
   "Build URL with query PARAMS."
   (let ((query (gcal-http-make-query params)))
-    (if (> (length query) 0) (concat url "?" query) url)))
+    (if (> (length query) 0)
+        (concat url "?" query)
+      url)))
 
 (defun gcal-http (method url params headers data)
   "Request URL via METHOD with PARAMS HEADERS DATA and parse response."
