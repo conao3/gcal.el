@@ -258,35 +258,29 @@ See `gcal-http' for URL PARAMS docstring."
                (:copier nil))
   access expires refresh url)
 
-(defun gcal-oauth-get-access-token (auth-url token-url client-id client-secret scope)
-  "Get access-token."
-  (gcal-retrieve-json-post-www-form token-url
-    `(("client_id" . ,client-id)
-      ("client_secret" . ,client-secret)
-      ("redirect_uri" . "urn:ietf:wg:oauth:2.0:oob")
-      ("grant_type" . "authorization_code")
-      ("code" . ,(progn
-                   (browse-url
-                    (gcal-http-make-query-url
-                     auth-url
-                     `(("client_id" . ,client-id)
-                       ("response_type" . "code")
-                       ("redirect_uri" . "urn:ietf:wg:oauth:2.0:oob")
-                       ("scope" . ,scope))))
-                   (read-string "Enter the authentication code your browser displayed: "))))))
-
-(defun gcal-oauth-get-refresh-token (refresh-token token-url client-id client-secret)
-  "Get access-token using REFRESH-TOKEN."
-  (gcal-retrieve-json-post-www-form token-url
-    `(("client_id" . ,client-id)
-      ("client_secret" . ,client-secret)
-      ("redirect_uri" . "urn:ietf:wg:oauth:2.0:oob")
-      ("grant_type" . "refresh_token")
-      ("refresh_token" . ,refresh-token))))
-
 (defun gcal-oauth-auth (auth-url token-url client-id client-secret scope)
-  "Get access-token"
-  (let ((result (gcal-oauth-get-access-token auth-url token-url client-id client-secret scope)))
+  "Get oauth token, return `gcal-oauth-token'.
+
+Argumemnts:
+  AUTH-URL string: URL to auth
+  TOKEN-URL string: URL to token
+  CLIENT-ID string: client id
+  CLIENT-SECRET string: client secret
+  SCOPE string: scope"
+  (let ((result (gcal-retrieve-json-post-www-form token-url
+                  `(("client_id" . ,client-id)
+                    ("client_secret" . ,client-secret)
+                    ("redirect_uri" . "urn:ietf:wg:oauth:2.0:oob")
+                    ("grant_type" . "authorization_code")
+                    ("code" . ,(progn
+                                 (browse-url
+                                  (gcal-http-make-query-url
+                                   auth-url
+                                   `(("client_id" . ,client-id)
+                                     ("response_type" . "code")
+                                     ("redirect_uri" . "urn:ietf:wg:oauth:2.0:oob")
+                                     ("scope" . ,scope))))
+                                 (read-string "Enter the authentication code your browser displayed: ")))))))
     (let-alist result
       (gcal-oauth-token-new
        :access .access_token
@@ -294,13 +288,17 @@ See `gcal-http' for URL PARAMS docstring."
        :refresh .refreshtoken
        :url token-url))))
 
-(defun gcal-oauth-refresh (token client-id client-secret &optional token-url)
-  "Refresh token for gcal-oauth-token."
+(defun gcal-oauth-refresh (token token-url client-id client-secret)
+  "Refresh TOKEN, return `gcal-oauth-token'.
+
+See `gcal-oauth-auth' for TOKEN-URL CLIENT-ID CLIENT-SECRET."
   (when token
-    (let ((result (gcal-oauth-get-refresh-token
-                   (gcal-oauth-token-refresh token)
-                   (or token-url (gcal-oauth-token-url token))
-                   client-id client-secret)))
+    (let ((result (gcal-retrieve-json-post-www-form token-url
+                    `(("client_id" . ,client-id)
+                      ("client_secret" . ,client-secret)
+                      ("redirect_uri" . "urn:ietf:wg:oauth:2.0:oob")
+                      ("grant_type" . "refresh_token")
+                      ("refresh_token" . ,(gcal-oauth-token-refresh token))))))
       (let-alist result
         (when (and .access_token .expires_in)
           (setf (gcal-oauth-token-access token) .access_token)
@@ -329,7 +327,7 @@ Arguments:
   (or
    (gcal-oauth-load-token token-file)
    (let ((token (or
-                 (gcal-oauth-refresh token client-id client-secret token-url)
+                 (gcal-oauth-refresh token token-url client-id client-secret)
                  (gcal-oauth-auth auth-url token-url client-id client-secret scope))))
      (gcal-oauth-save-token token-file token)
      token)))
