@@ -212,18 +212,15 @@ See `gcal-http' for URL PARAMS METHOD docstring."
      ("client_secret" . ,client-secret)
      ("redirect_uri" . "urn:ietf:wg:oauth:2.0:oob")
      ("grant_type" . "authorization_code")
-     ("code" . ,(gcal-oauth-get-authorization-code auth-url client-id scope)))))
-
-(defun gcal-oauth-get-authorization-code (auth-url client-id scope)
-  "ブラウザを開いてユーザに認証してもらい、認証コードを受け付けます。"
-  (browse-url
-   (gcal-http-make-query-url
-    auth-url
-    `(("client_id" . ,client-id)
-      ("response_type" . "code")
-      ("redirect_uri" . "urn:ietf:wg:oauth:2.0:oob")
-      ("scope" . ,scope))))
-  (read-string "Enter the code your browser displayed: "))
+     ("code" . ,(progn
+                  (browse-url
+                   (gcal-http-make-query-url
+                    auth-url
+                    `(("client_id" . ,client-id)
+                      ("response_type" . "code")
+                      ("redirect_uri" . "urn:ietf:wg:oauth:2.0:oob")
+                      ("scope" . ,scope))))
+                  (read-string "Enter the authentication code your browser displayed: "))))))
 
 (defun gcal-oauth-get-refresh-token (refresh-token token-url client-id client-secret)
   "リフレッシュされたアクセストークンを取得します。JSONをリストへ変換したもので返します。"
