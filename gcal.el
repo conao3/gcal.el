@@ -133,7 +133,7 @@
      (url-retrieve-synchronously (gcal-http-make-query-url url params)))))
 
 (defun gcal-http-get (url params)
-  "Send GET request to url with params as query parameter."
+  "Send GET request to URL with PARAMS."
   (gcal-http "GET" url params nil nil))
 
 (defun gcal-http-post-www-form (url params)
