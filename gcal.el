@@ -258,16 +258,17 @@ See `gcal-http' for URL PARAMS METHOD docstring."
 
 (defun gcal-oauth-refresh (token client-id client-secret &optional token-url)
   "Refresh token for gcal-oauth-token."
-  (let ((result (gcal-oauth-get-refresh-token
-                 (gcal-oauth-token-refresh token)
-                 (or token-url (gcal-oauth-token-url token))
-                 client-id client-secret)))
-    (let-alist result
-      (when (and .access_token .expires_in)
-        (setf (gcal-oauth-token-access token) .access_token)
-        (setf (gcal-oauth-token-expires token)
-              (time-add (current-time) (seconds-to-time .expires_in)))
-        token))))
+  (when token
+    (let ((result (gcal-oauth-get-refresh-token
+                   (gcal-oauth-token-refresh token)
+                   (or token-url (gcal-oauth-token-url token))
+                   client-id client-secret)))
+      (let-alist result
+        (when (and .access_token .expires_in)
+          (setf (gcal-oauth-token-access token) .access_token)
+          (setf (gcal-oauth-token-expires token)
+                (time-add (current-time) (seconds-to-time .expires_in)))
+          token)))))
 
 (defun gcal-oauth-save-token (file token)
   "Save TOKEN into FILE."
