@@ -53,6 +53,7 @@
 ;;; Code:
 
 (require 'cl-lib)
+(require 'subr-x)
 (require 'url)
 (require 'url-util)
 (require 'json)
@@ -121,20 +122,30 @@ Like xxxxxxxxxxxxxxxxxxxxxxxx"
       (list code status (nreverse headers) body))))
 
 (defun gcal-http-make-query (params)
-  "Build query string from PARAMS."
-  (mapconcat
-   (lambda (elm)
-     (let ((key (car elm))
-           (v (cdr elm)))
-       (mapconcat
-        (lambda (value)
-          (format "%s=%s"
-                  (url-hexify-string (format "%s" key))
-                  (url-hexify-string (format "%s" value))))
-        (if (listp v) v (list v))
-        "&")))
-   params
-   "&"))
+  "Build query string from PARAMS.
+
+Example:
+  (gcal-http-make-query '((\"a\" . \"b\") (\"c\" . \"d\")))
+  ;;=> \"a=b&c=d\"
+
+  (gcal-http-make-query '((a . \"b\") (c . \"d\")))
+  ;;=> \"a=b&c=d\"
+
+  (gcal-http-make-query '((a . \"b\") (c . (\"d\" \"e\"))))
+  ;;=> \"a=b&c=d&c=e\""
+  (cl-flet ((concat-args
+             (elm)
+             (format "%s=%s"
+                     (url-hexify-string (format "%s" (car elm)))
+                     (url-hexify-string (format "%s" (cdr elm)))))
+            (concat-seqs (sequence) (mapconcat 'identity sequence "&")))
+    (thread-last params
+      (mapcan (lambda (elm)
+                (if (atom (cdr elm))
+                    (list elm)
+                  (mapcar (lambda (e) (cons (car elm) e)) (cdr elm)))))
+      (mapcar #'concat-args)
+      (concat-seqs))))
 
 (defun gcal-http-make-query-url (url params)
   "Build URL with query PARAMS."
