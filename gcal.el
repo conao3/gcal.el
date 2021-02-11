@@ -128,9 +128,9 @@ Example:
    (when params
      (concat "?" (gcal-http-make-query-string params)))))
 
-(defun gcal-parse-http-response (buf)
+(defun gcal-parse-http-response (&optional buf)
   "Parse HTTP response BUF."
-  (with-current-buffer buf
+  (with-current-buffer (or buf (current-buffer))
     (goto-char (point-min))
 
     (let (code status headers body)
@@ -165,8 +165,9 @@ Optional:
   (let ((url-request-method method)
         (url-request-extra-headers headers)
         (url-request-data req-body))
-    (gcal-parse-http-response
-     (url-retrieve-synchronously (gcal-http-make-query-url url params)))))
+    (with-current-buffer (url-retrieve-synchronously (gcal-http-make-query-url url params))
+      (gcal-parse-http-response)
+      (kill-buffer))))
 
 ;;; request wrapper
 
