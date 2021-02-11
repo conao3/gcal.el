@@ -93,6 +93,7 @@ Like xxxxxxxxxxxxxxxxxxxxxxxx"
 (defconst gcal-auth-url "https://accounts.google.com/o/oauth2/auth")
 (defconst gcal-token-url "https://www.googleapis.com/oauth2/v3/token")
 (defconst gcal-scope-url "https://www.googleapis.com/auth/calendar")
+(defconst gcal-calendar-url "https://www.googleapis.com/calendar/v3")
 
 
 ;;;; HTTP
@@ -359,28 +360,129 @@ Arguments:
 
 ;;;; API URL Builder
 
-(defconst gcal-calendar-url "https://www.googleapis.com/calendar/v3")
+(defun gcal-calendar-api-backend (method resource &rest args)
+  "Get Google Calendar API method and URL.
 
-(defun gcal-calendar-list-url (&optional calendar-id)
-  "Build URL from CALENDAR-ID."
-  (concat
-   gcal-calendar-url
-   "/users/me/calendarList"
-   (when calendar-id (concat "/" calendar-id))))
+Argumemnt:
+  METHOD symbol: (:get :delete ...)
+  RESOURCE symbol: (:acl :calendar-list :calendars :channels
+                    :colors :events :freebusy :settings)
+  ARGS (string): Arguments
 
-(defun gcal-calendars-url (&optional calendar-id &rest suffix)
-  "Build API URL from CALENDAR-ID, SUFFIX."
-  (concat
-   gcal-calendar-url
-   "/calendars"
-   (when calendar-id (concat "/" calendar-id))
-   (when suffix (concat "/" (mapconcat 'identity suffix "/")))))
+Return:
+  (METHOD URL)
 
-(defun gcal-events-url (calendar-id &optional &rest suffix)
-  "Build API URL from CALENDAR-ID, SUFFIX."
-  (concat
-   (gcal-calendars-url calendar-id "events")
-   (when suffix (concat "/" (mapconcat 'identity suffix "/")))))
+See https://developers.google.com/calendar/v3/reference"
+  (pcase-let
+      ((`(,method ,url)
+        (cl-case resource
+          (:acl
+           (cl-case method
+             (:delete
+              '(:delete "/calendars/%a/acl/%b"))
+             (:get
+              '(:get "/calendars/%a/acl/%b"))
+             (:insert
+              '(:post "/calendars/%a/acl"))
+             (:list
+              '(:get "/calendars/%a/acl"))
+             (:patch
+              '(:patch "/calendars/%a/acl/%b"))
+             (:update
+              '(:put "/calendars/%a/acl/%b"))
+             (:watch
+              '(:post  "/calendars/%a/acl/watch"))))
+
+          (:calendar-list
+           (cl-case method
+             (:delete
+              '(:delete "/users/me/calendarList/%a"))
+             (:get
+              '(:get "/users/me/calendarList/%a"))
+             (:insert
+              '(:post "/users/me/calendarList"))
+             (:list
+              '(:get "/users/me/calendarList"))
+             (:patch
+              '(:patch "/users/me/calendarList/%a"))
+             (:update
+              '(:update "/users/me/calendarList/%a"))
+             (:watch
+              '(:post "/users/me/calendarList/watch"))))
+
+          (:calendars
+           (cl-case method
+             (:clear
+              '(:post "/calendars/%a/clear"))
+             (:delete
+              '(:delete "/calendars/%a"))
+             (:get
+              '(:get "/calendars/%a"))
+             (:insert
+              '(:post "/calendars"))
+             (:patch
+              '(:patch "/calendars/%a"))
+             (:update
+              '(:put "/calendars/%a"))))
+
+          (:channels
+           (cl-case method
+             (:stop
+              '(:post "/channels/stop"))))
+
+          (:colors
+           (cl-case method
+             (:get
+              '(:get "/colors"))))
+
+          (:events
+           (cl-case method
+             (:delete
+              '(:delete "/calendars/%a/events/%b"))
+             (:get
+              '(:get "/calendars/%a/events/%b"))
+             (:import
+              '(:post "/calendars/%a/events/import"))
+             (:insert
+              '(:post "/calendars/%a/events"))
+             (:instances
+              '(:get "/calendars/%a/events/%b/instances"))
+             (:list
+              '(:get "/calendars/%a/events"))
+             (:move
+              '(:post "/calendars/%a/events/%b/move"))
+             (:patch
+              '(:patch "/calendars/%a/events/%b"))
+             (:quick-add
+              '(:post "/calendars/%a/events/quickAdd"))
+             (:update
+              '(:put "/calendars/%a/events/%b"))
+             (:watch
+              '(:post "/calendars/%a/events/watch"))))
+
+          (:freebusy
+           (cl-case method
+             (:query
+              '(:post "/freeBusy"))))
+
+          (:settings
+           (cl-case method
+             (:get
+              '(:get "/users/me/settings/setting"))
+             (:list
+              '(:get "/users/me/settings"))
+             (:watch
+              '(:post "/users/me/settings/watch")))))))
+    (list
+     method
+     (concat gcal-calendar-url
+             (format-spec
+              url
+              `((?a . ,(nth 0 args))
+                (?b . ,(nth 1 args))
+                (?c . ,(nth 2 args))
+                (?d . ,(nth 3 args))
+                (?e . ,(nth 4 args))))))))
 
 
 ;;;; API Wrapper
@@ -389,24 +491,24 @@ Arguments:
 
 (defun gcal-calendar-list-list ()
   "CalendarList: list"
-  (gcal-retrieve-json-get (gcal-calendar-list-url)
+  (gcal-retrieve-json-get (gcal-calendar-api-url 'list 'calendar-list)
     (gcal-access-token-params)))
 
 ;; Events
 
 (defun gcal-events-list (calendar-id &optional params)
   "Events: list"
-  (gcal-retrieve-json-get (gcal-events-url calendar-id)
+  (gcal-retrieve-json-get (gcal-calendar-api-url 'list 'events calendar-id)
     (append (gcal-access-token-params) params)))
 
 (defun gcal-events-get (calendar-id event-id &optional params)
   "Events: get"
-  (gcal-retrieve-json-get (gcal-events-url calendar-id event-id)
+  (gcal-retrieve-json-get (gcal-calendar-api-url 'get 'events calendar-id event-id)
     (append (gcal-access-token-params) params)))
 
 (defun gcal-events-quick-add (calendar-id text &optional params)
   "Events: quickAdd"
-  (gcal-retrieve-json-post-json (gcal-events-url calendar-id "quickAdd")
+  (gcal-retrieve-json-post-json (gcal-calendar-api-url 'quick-add 'events calendar-id)
     (append (gcal-access-token-params) params `(("text" . ,text)))
     nil))
 
