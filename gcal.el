@@ -155,7 +155,6 @@
   "Convert HTTP RESPONSE to parsed JSON object."
   (let ((status (nth 0 response))
         (body (nth 3 response)))
-    ;; @todo check status
     (cond
      ((= status 204) nil)               ; 204 No Content
      (t
