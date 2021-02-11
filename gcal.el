@@ -175,9 +175,16 @@ Optional:
   "Send GET request to URL with PARAMS."
   (gcal-http "GET" url params))
 
-(defun gcal-http-post-json (url params json &optional method)
+(defun gcal-http-post-json (url params json)
   "Send POST request (with PARAMS and JSON BODY) to URL."
-  (gcal-http (or method "POST") url
+  (gcal-http "POST" url
+    params
+    '(("Content-Type" . "application/json"))
+    (encode-coding-string (json-encode json) 'utf-8)))
+
+(defun gcal-http-request-json (method url params json)
+  "Send request via METHOD (with PARAMS and JSON BODY) to URL."
+  (gcal-http method url
     params
     '(("Content-Type" . "application/json"))
     (encode-coding-string (json-encode json) 'utf-8)))
@@ -216,12 +223,17 @@ See `gcal-http' for URL PARAMS docstring."
   (gcal-http-response-to-json
    (gcal-http-get url params)))
 
-(defun gcal-retrieve-json-post-json (url params json &optional method)
+(defun gcal-retrieve-json-post-json (url params json)
   "Send HTTP POST request (with encoded JSON string) and return JSON object.
 
 See `gcal-http' for URL PARAMS METHOD docstring."
   (gcal-http-response-to-json
-   (gcal-http-post-json url params json method)))
+   (gcal-http-post-json url params json)))
+
+(defun gcal-retrieve-json-request-json (method url params json)
+  "Send request via METHOD (with PARAMS and JSON BODY) to URL."
+  (gcal-http-response-to-json
+   (gcal-http-request-json method url params json)))
 
 (defun gcal-retrieve-json-post-www-form (url params)
   "Send HTTP POST request (x-www-form-url-encoded) and return JSON object.
@@ -407,19 +419,19 @@ Example:
 
 (defun gcal-events-patch (calendar-id event-id event-data &optional params)
   "Events: patch"
-  (gcal-retrieve-json-post-json
+  (gcal-retrieve-json-request-json
+   "PATCH"
    (gcal-events-url calendar-id event-id)
    (append (gcal-access-token-params) params)
-   event-data
-   "PATCH"))
+   event-data))
 
 (defun gcal-events-update (calendar-id event-id event-data &optional params)
   "Events: update"
-  (gcal-retrieve-json-post-json
+  (gcal-retrieve-json-request-json
+   "PUT"
    (gcal-events-url calendar-id event-id)
    (append (gcal-access-token-params) params)
-   event-data
-   "PUT"))
+   event-data))
 
 (defun gcal-events-delete (calendar-id event-id &optional params)
   "Events: delete"
