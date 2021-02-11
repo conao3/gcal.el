@@ -102,6 +102,7 @@
         (list status message headers body)))))
 
 (defun gcal-http (method url params headers data)
+  "Request URL via METHOD with PARAMS HEADERS DATA and parse response."
   (let ((url-request-method (or method "GET"))
         (url-request-extra-headers headers)
         (url-request-data data))
