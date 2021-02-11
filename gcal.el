@@ -181,12 +181,12 @@ See `gcal-http' for URL PARAMS docstring."
   (gcal-http-response-to-json
    (gcal-http-post-www-form url params)))
 
-(defun gcal-retrieve-json-post-json (url params json-obj &optional method)
+(defun gcal-retrieve-json-post-json (url params json &optional method)
   "Send HTTP POST request (with encoded JSON string) and return JSON object.
 
 See `gcal-http' for URL PARAMS METHOD docstring."
   (gcal-http-response-to-json
-   (gcal-http-post-json url params json-obj method)))
+   (gcal-http-post-json url params json method)))
 
 
 ;; OAuth
