@@ -172,19 +172,19 @@ Optional:
   "Send GET request to URL with PARAMS."
   (gcal-http "GET" url params))
 
-(defun gcal-http-post-www-form (url params)
-  "Send POST request (with x-www-form-url-encoded PARAMS) to URL."
-  (gcal-http "POST" url
-    nil
-    '(("Content-Type" . "application/x-www-form-urlencoded"))
-    (gcal-http-make-query-string params)))
-
 (defun gcal-http-post-json (url params json &optional method)
   "Send POST request (with PARAMS and JSON BODY) to URL."
   (gcal-http (or method "POST") url
     params
     '(("Content-Type" . "application/json"))
     (encode-coding-string (json-encode json) 'utf-8)))
+
+(defun gcal-http-post-www-form (url params)
+  "Send POST request (with x-www-form-url-encoded PARAMS) to URL."
+  (gcal-http "POST" url
+    nil
+    '(("Content-Type" . "application/x-www-form-urlencoded"))
+    (gcal-http-make-query-string params)))
 
 (defun gcal-http-response-to-json (response)
   "Convert HTTP RESPONSE to parsed JSON object."
