@@ -82,7 +82,7 @@ Like xxxxxxxxxxxxxxxxxxxxxxxx"
   :group 'gcal
   :type 'file)
 
-(defcustom gcal-time-zone-name-default "America/New_York"
+(defcustom gcal-default-time-zone "America/New_York"
   "Default time zone, one of IANA Time Zone Database name."
   :group 'gcal
   :type 'string)
@@ -416,8 +416,8 @@ Example:
 ;; datetime = RFC3339
 ;;   (ex: 2016-05-01T12:34:00+09:00)
 
-(defun gcal-time-zone-name-default ()
-  gcal-time-zone-name-default)
+(defun gcal-default-time-zone ()
+  gcal-default-time-zone)
 
 (defun gcal-time-zone-suffix ()
   (let ((tz (format-time-string "%z")))
@@ -441,7 +441,7 @@ Example:
     (cons
      (if date-only 'dateTime 'date)
      nil))
-   (when-let ((name (gcal-time-zone-name-default)))
+   (when-let ((name (gcal-default-time-zone)))
      (list (cons 'timeZone name)))))
 
 (defun gcal-gtime (y m d &optional hh mm)
