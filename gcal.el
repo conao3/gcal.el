@@ -215,8 +215,8 @@ Arguments:
     (error "`gcal-client-secret' is empty"))
 
   ;; load from token-file
-  (if (null token)
-      (setq token (gcal-oauth-load-token token-file)))
+  (when (null token)
+    (setq token (gcal-oauth-load-token token-file)))
 
   ;; refresh token
   (when (and token
