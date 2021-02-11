@@ -378,11 +378,11 @@ Arguments:
   "Events: insert
 
 Example:
-(gcal-events-insert
- \"xxxxxxxxxxxxx@group.calendar.google.com\"
- `((start (date \"2016-05-25\"))
-   (end (date \"2016-05-26\"))
-   (summary . \"First Test Event\")))"
+  (gcal-events-insert
+   \"xxxxxxxxxxxxx@group.calendar.google.com\"
+   `((start (date \"2016-05-25\"))
+     (end (date \"2016-05-26\"))
+     (summary . \"First Test Event\")))"
   (gcal-retrieve-json-post-json
    (gcal-events-url calendar-id)
    (append (gcal-access-token-params) params)
