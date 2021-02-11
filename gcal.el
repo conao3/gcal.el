@@ -89,9 +89,8 @@
             (message (match-string 2))
             (headers)
             (body))
-        (forward-line)
-
         ;; Header Lines
+        (forward-line)
         (while (not (eolp))
           (when (looking-at "^\\([^:]+\\): \\(.*\\)$")
             (push `((match-string 1) . (match-string 2)) headers))
