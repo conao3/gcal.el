@@ -173,10 +173,12 @@ Optional:
 
 (defun gcal-http-get (url params)
   "Send GET request to URL with PARAMS."
+  (declare (indent 1))
   (gcal-http "GET" url params))
 
 (defun gcal-http-post-json (url params json)
   "Send POST request (with PARAMS and JSON BODY) to URL."
+  (declare (indent 1))
   (gcal-http "POST" url
     params
     '(("Content-Type" . "application/json"))
@@ -184,6 +186,7 @@ Optional:
 
 (defun gcal-http-request-json (method url params json)
   "Send request via METHOD (with PARAMS and JSON BODY) to URL."
+  (declare (indent 2))
   (gcal-http method url
     params
     '(("Content-Type" . "application/json"))
@@ -191,6 +194,7 @@ Optional:
 
 (defun gcal-http-post-www-form (url params)
   "Send POST request (with x-www-form-url-encoded PARAMS) to URL."
+  (declare (indent 1))
   (gcal-http "POST" url
     nil
     '(("Content-Type" . "application/x-www-form-urlencoded"))
@@ -220,6 +224,7 @@ See `gcal-http' for METHOD URL PARAMS HEADERS REQ-BODY docstring."
   "Send HTTP GET request and return JSON object.
 
 See `gcal-http' for URL PARAMS docstring."
+  (declare (indent 1))
   (gcal-http-response-to-json
    (gcal-http-get url params)))
 
@@ -227,11 +232,13 @@ See `gcal-http' for URL PARAMS docstring."
   "Send HTTP POST request (with encoded JSON string) and return JSON object.
 
 See `gcal-http' for URL PARAMS METHOD docstring."
+  (declare (indent 1))
   (gcal-http-response-to-json
    (gcal-http-post-json url params json)))
 
 (defun gcal-retrieve-json-request-json (method url params json)
   "Send request via METHOD (with PARAMS and JSON BODY) to URL."
+  (declare (indent 2))
   (gcal-http-response-to-json
    (gcal-http-request-json method url params json)))
 
@@ -239,6 +246,7 @@ See `gcal-http' for URL PARAMS METHOD docstring."
   "Send HTTP POST request (x-www-form-url-encoded) and return JSON object.
 
 See `gcal-http' for URL PARAMS docstring."
+  (declare (indent 1))
   (gcal-http-response-to-json
    (gcal-http-post-www-form url params)))
 
@@ -252,31 +260,29 @@ See `gcal-http' for URL PARAMS docstring."
 
 (defun gcal-oauth-get-access-token (auth-url token-url client-id client-secret scope)
   "Get access-token."
-  (gcal-retrieve-json-post-www-form
-   token-url
-   `(("client_id" . ,client-id)
-     ("client_secret" . ,client-secret)
-     ("redirect_uri" . "urn:ietf:wg:oauth:2.0:oob")
-     ("grant_type" . "authorization_code")
-     ("code" . ,(progn
-                  (browse-url
-                   (gcal-http-make-query-url
-                    auth-url
-                    `(("client_id" . ,client-id)
-                      ("response_type" . "code")
-                      ("redirect_uri" . "urn:ietf:wg:oauth:2.0:oob")
-                      ("scope" . ,scope))))
-                  (read-string "Enter the authentication code your browser displayed: "))))))
+  (gcal-retrieve-json-post-www-form token-url
+    `(("client_id" . ,client-id)
+      ("client_secret" . ,client-secret)
+      ("redirect_uri" . "urn:ietf:wg:oauth:2.0:oob")
+      ("grant_type" . "authorization_code")
+      ("code" . ,(progn
+                   (browse-url
+                    (gcal-http-make-query-url
+                     auth-url
+                     `(("client_id" . ,client-id)
+                       ("response_type" . "code")
+                       ("redirect_uri" . "urn:ietf:wg:oauth:2.0:oob")
+                       ("scope" . ,scope))))
+                   (read-string "Enter the authentication code your browser displayed: "))))))
 
 (defun gcal-oauth-get-refresh-token (refresh-token token-url client-id client-secret)
   "Get access-token using REFRESH-TOKEN."
-  (gcal-retrieve-json-post-www-form
-   token-url
-   `(("client_id" . ,client-id)
-     ("client_secret" . ,client-secret)
-     ("redirect_uri" . "urn:ietf:wg:oauth:2.0:oob")
-     ("grant_type" . "refresh_token")
-     ("refresh_token" . ,refresh-token))))
+  (gcal-retrieve-json-post-www-form token-url
+    `(("client_id" . ,client-id)
+      ("client_secret" . ,client-secret)
+      ("redirect_uri" . "urn:ietf:wg:oauth:2.0:oob")
+      ("grant_type" . "refresh_token")
+      ("refresh_token" . ,refresh-token))))
 
 (defun gcal-oauth-auth (auth-url token-url client-id client-secret scope)
   "Get access-token"
@@ -378,30 +384,26 @@ Arguments:
 
 (defun gcal-calendar-list-list ()
   "CalendarList: list"
-  (gcal-retrieve-json-get
-   (gcal-calendar-list-url)
-   (gcal-access-token-params)))
+  (gcal-retrieve-json-get (gcal-calendar-list-url)
+    (gcal-access-token-params)))
 
 ;; Events
 
 (defun gcal-events-list (calendar-id &optional params)
   "Events: list"
-  (gcal-retrieve-json-get
-   (gcal-events-url calendar-id)
-   (append (gcal-access-token-params) params)))
+  (gcal-retrieve-json-get (gcal-events-url calendar-id)
+    (append (gcal-access-token-params) params)))
 
 (defun gcal-events-get (calendar-id event-id &optional params)
   "Events: get"
-  (gcal-retrieve-json-get
-   (gcal-events-url calendar-id event-id)
-   (append (gcal-access-token-params) params)))
+  (gcal-retrieve-json-get (gcal-events-url calendar-id event-id)
+    (append (gcal-access-token-params) params)))
 
 (defun gcal-events-quick-add (calendar-id text &optional params)
   "Events: quickAdd"
-  (gcal-retrieve-json-post-json
-   (gcal-events-url calendar-id "quickAdd")
-   (append (gcal-access-token-params) params `(("text" . ,text)))
-   nil))
+  (gcal-retrieve-json-post-json (gcal-events-url calendar-id "quickAdd")
+    (append (gcal-access-token-params) params `(("text" . ,text)))
+    nil))
 
 (defun gcal-events-insert (calendar-id event-data &optional params)
   "Events: insert
@@ -412,33 +414,29 @@ Example:
    `((start (date \"2016-05-25\"))
      (end (date \"2016-05-26\"))
      (summary . \"First Test Event\")))"
-  (gcal-retrieve-json-post-json
-   (gcal-events-url calendar-id)
-   (append (gcal-access-token-params) params)
-   event-data))
+  (gcal-retrieve-json-post-json (gcal-events-url calendar-id)
+    (append (gcal-access-token-params) params)
+    event-data))
 
 (defun gcal-events-patch (calendar-id event-id event-data &optional params)
   "Events: patch"
   (gcal-retrieve-json-request-json
-   "PATCH"
-   (gcal-events-url calendar-id event-id)
-   (append (gcal-access-token-params) params)
-   event-data))
+      "PATCH" (gcal-events-url calendar-id event-id)
+    (append (gcal-access-token-params) params)
+    event-data))
 
 (defun gcal-events-update (calendar-id event-id event-data &optional params)
   "Events: update"
   (gcal-retrieve-json-request-json
-   "PUT"
-   (gcal-events-url calendar-id event-id)
-   (append (gcal-access-token-params) params)
-   event-data))
+      "PUT" (gcal-events-url calendar-id event-id)
+    (append (gcal-access-token-params) params)
+    event-data))
 
 (defun gcal-events-delete (calendar-id event-id &optional params)
   "Events: delete"
   (gcal-retrieve-json
-   "DELETE"
-   (gcal-events-url calendar-id event-id)
-   (append (gcal-access-token-params) params)))
+      "DELETE" (gcal-events-url calendar-id event-id)
+    (append (gcal-access-token-params) params)))
 
 
 ;;;; Time Utilities
