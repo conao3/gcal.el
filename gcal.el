@@ -113,7 +113,7 @@ Like xxxxxxxxxxxxxxxxxxxxxxxx"
         (forward-line)
         (setq body (buffer-substring (point) (point-max)))
 
-        (list status message headers body)))))
+        (list status message (nreverse headers) body)))))
 
 (defun gcal-http-make-query (params)
   "Build query string from PARAMS."
