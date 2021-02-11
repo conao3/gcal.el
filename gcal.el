@@ -74,6 +74,16 @@
   :group 'gcal
   :type 'string)
 
+(defcustom gcal-token-file (locate-user-emacs-file ".gcal-token")
+  "Path to access token file."
+  :group 'gcal
+  :type 'file)
+
+(defcustom gcal-time-zone-name-default "America/New_York"
+  "Default time zone, one of IANA Time Zone Database name."
+  :group 'gcal
+  :type 'string)
+
 (defconst gcal-auth-url "https://accounts.google.com/o/oauth2/auth")
 (defconst gcal-token-url "https://www.googleapis.com/oauth2/v3/token")
 (defconst gcal-scope-url "https://www.googleapis.com/auth/calendar")
@@ -299,14 +309,6 @@ Arguments:
 
 ;; Google Calendar OAuth
 
-;; Example: (gcal-access-token)
-
-(defcustom gcal-token-file
-  (expand-file-name (concat user-emacs-directory ".gcal-token"))
-  "access token file"
-  :group 'gcal
-  :type 'file)
-
 (defvar gcal-access-token nil)
 
 (defun gcal-access-token ()
@@ -423,14 +425,6 @@ Example:
 ;;   (ex: ('date . "2016-05-27") ('dateTime . "2016-05-27T12:34:00+09:00"))
 ;; datetime = RFC3339
 ;;   (ex: 2016-05-01T12:34:00+09:00)
-
-(defcustom gcal-time-zone-name-default nil
-  "デフォルトのタイムゾーン名です。
-
-IANA Time Zone Database nameで指定します(例:Asia/Tokyo)。
-
-単発のイベントのみ使う場合は省略可能ですが、繰り返しイベントに時刻を含めたいときは必須です。"
-  :group 'gcal :type '(choice (const nil) string))
 
 (defun gcal-time-zone-name-default ()
   gcal-time-zone-name-default)
