@@ -105,8 +105,8 @@ Like xxxxxxxxxxxxxxxxxxxxxxxx"
         ;; headers
         (forward-line)
         (while (not (eolp))
-            (push `((match-string 1) . (match-string 2)) headers))
           (when (looking-at "^\\([^:]+\\): \\(.*\\)$")       ; Content-Length: 2134
+            (push `(,(match-string 1) . ,(match-string 2)) headers))
           (forward-line))
 
         ;; body
