@@ -161,24 +161,30 @@
       (json-read-from-string (decode-coding-string body 'utf-8))))))
 
 (defun gcal-retrieve-json (method url params &optional headers data)
-  "Send HTTP request and return parsed JSON object."
+  "Send HTTP request and return JSON object.
+
+See `gcal-http' for METHOD URL PARAMS HEADERS DATA docstring."
   (gcal-http-response-to-json
    (gcal-http method url params headers data)))
 
 (defun gcal-retrieve-json-get (url params)
-  "Send HTTP GET request and return parsed JSON object."
+  "Send HTTP GET request and return JSON object.
+
+See `gcal-http' for URL PARAMS docstring."
   (gcal-http-response-to-json
    (gcal-http-get url params)))
 
 (defun gcal-retrieve-json-post-www-form (url params)
-  "Send HTTP POST request(x-www-form-url-encoded) and return
-parsed JSON object."
+  "Send HTTP POST request (x-www-form-url-encoded) and return JSON object.
+
+See `gcal-http' for URL PARAMS docstring."
   (gcal-http-response-to-json
    (gcal-http-post-www-form url params)))
 
 (defun gcal-retrieve-json-post-json (url params json-obj &optional method)
-  "Send HTTP POST request(with encoded JSON string) and return
-parsed JSON object."
+  "Send HTTP POST request (with encoded JSON string) and return JSON object.
+
+See `gcal-http' for URL PARAMS METHOD docstring."
   (gcal-http-response-to-json
    (gcal-http-post-json url params json-obj method)))
 
