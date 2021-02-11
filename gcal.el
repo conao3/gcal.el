@@ -110,11 +110,10 @@
             (values (if (listp v) v (list v))))
        (mapconcat
         (lambda (value)
-          (concat
-           (url-hexify-string (format "%s" key))
-           "="
-           (url-hexify-string (format "%s" value))))
+          (format "%s=%s"
         values
+                  (url-hexify-string (format "%s" key))
+                  (url-hexify-string (format "%s" value))))
         "&")))
    params
    "&"))
