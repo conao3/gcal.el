@@ -288,22 +288,13 @@ Arguments:
   (when (string-empty-p gcal-client-secret)
     (error "`gcal-client-secret' is empty"))
 
-  ;; load from token-file
-  (when (null token)
-    (setq token (gcal-oauth-load-token token-file)))
-
-  ;; refresh token
-  (when (and token
-             (time-less-p (gcal-oauth-token-expires token) (current-time)))
-    (setq token (gcal-oauth-refresh token client-id client-secret token-url))
-    (gcal-oauth-save-token token-file token))
-
-  ;; new token
-  (when (null token)
-    (setq token (gcal-oauth-auth auth-url token-url client-id client-secret scope))
-    (gcal-oauth-save-token token-file token))
-
-  token)
+  (or
+   (gcal-oauth-load-token token-file)
+   (let ((token (or
+                 (gcal-oauth-refresh token client-id client-secret token-url)
+                 (gcal-oauth-auth auth-url token-url client-id client-secret scope))))
+     (gcal-oauth-save-token token-file token)
+     token)))
 
 
 ;; Google Calendar OAuth
