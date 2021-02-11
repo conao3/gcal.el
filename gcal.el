@@ -23,32 +23,36 @@
 
 ;;; Commentary:
 
-;;
-;; (require 'gcal)
-;; (setq gcal-client-id "xxxxxxxxx.apps.googleusercontent.com")
-;; (setq gcal-client-secret "xxxx-XxxxXxxXXXxx") ;;API-KEY
-;;
-;; ;; list my calendars
-;; (gcal-calendar-list-list) ;; Calendar List
-;;
-;; ;; list events
-;; (gcal-events-list
-;;  "example@gmail.com" ;;<- calendar-id
-;;   `((timeMin . ,(gcal-datetime 2016 5 1))
-;;     (timeMax . ,(gcal-datetime 2016 6 1))))
-;;
-;; ;; insert event
-;; (gcal-events-insert
-;;  "example@gmail.com"
-;;  `((start . ,(gcal-gtime 2016 5 27))
-;;    (end . ,(gcal-gtime 2016 5 28))
-;;   (summary . "My Special Holiday")))
-;;
-;; ;; delete event
-;; (gcal-events-delete "example@gmail.com" "xxx{event id}xxx")
-;;
+;; To use this package, add below code in your init.el.
+
+;;   (require 'gcal)
+;;   (setq gcal-client-id "xxxxxxxxx.apps.googleusercontent.com")
+;;   (setq gcal-client-secret "xxxx-XxxxXxxXXXxx") ; API-KEY
+
+;; gcal has below APIs
+
+;;   ;; list my calendars
+;;   (gcal-calendar-list-list) ;; Calendar List
+
+;;   ;; list events
+;;   (gcal-events-list
+;;    "example@gmail.com" ;;<- calendar-id
+;;     `((timeMin . ,(gcal-datetime 2016 5 1))
+;;       (timeMax . ,(gcal-datetime 2016 6 1))))
+
+;;   ;; insert event
+;;   (gcal-events-insert
+;;    "example@gmail.com"
+;;    `((start . ,(gcal-gtime 2016 5 27))
+;;      (end . ,(gcal-gtime 2016 5 28))
+;;     (summary . "My Special Holiday")))
+
+;;   ;; delete event
+;;   (gcal-events-delete "example@gmail.com" "xxx{event id}xxx")
+
 
 ;;; Code:
+
 (require 'url)
 (require 'url-util)
 (require 'json)
@@ -97,9 +101,9 @@
           (setq body (buffer-substring (point) (point-max)))
 
           ;; Result
-          ;;(push (cons ":Body" body) headers)
-          ;;(push (cons ":Status" status) headers)
-          ;;(push (cons ":Message" message) headers)
+          ;; (push (cons ":Body" body) headers)
+          ;; (push (cons ":Status" status) headers)
+          ;; (push (cons ":Message" message) headers)
           (list status message headers body)))))
 
 (defun gcal-http-get (url params)
@@ -142,9 +146,9 @@ gcal-parse-http-response) to parsed JSON object(by
 json-read-from-string)."
   (let* ((status (nth 0 response))
          (body (nth 3 response)))
-    ;;@todo check status
+    ;; @todo check status
     (cond
-     ((= status 204) nil) ;;empty result
+     ((= status 204) nil) ; empty result
      (t
       (json-read-from-string (decode-coding-string body 'utf-8))))))
 
@@ -171,10 +175,11 @@ json-read-from-string)."
   (let* ((query (gcal-http-make-query params)))
     (if (> (length query) 0) (concat url "?" query) url)))
 
-;;
+
 ;; OAuth
+
 ;; (この部分は一応Google Calendar以外でも使い回せるように作っています)
-;;
+
 ;; Example: (setq token (gcal-oauth-get nil "https://accounts.google.com/o/oauth2/auth" "https://www.googleapis.com/oauth2/v3/token" "xxx.apps.googleusercontent.com" "secret_xxx" "https://www.googleapis.com/auth/calendar"))
 ;; Example: (gcal-oauth-token-access token)
 ;; Example: (gcal-oauth-token-expires token)
@@ -282,9 +287,9 @@ json-read-from-string)."
           (insert-file-contents file)
           (read (buffer-string))))))
 
-;;
+
 ;; Google Calendar OAuth
-;;
+
 ;; Example: (gcal-access-token)
 
 (defcustom gcal-token-file
@@ -309,9 +314,8 @@ json-read-from-string)."
   `(
     ("access_token" . ,(gcal-access-token))))
 
-;;
+
 ;; API URL Builder
-;;
 
 (defconst gcal-calendar-url "https://www.googleapis.com/calendar/v3")
 
@@ -334,9 +338,8 @@ json-read-from-string)."
    (if suffix1 (concat "/" suffix1))
    (if suffix2 (concat "/" suffix2))))
 
-;;
+
 ;; API Wrapper
-;;
 
 ;; CalendarList
 
@@ -403,16 +406,15 @@ Example:
    (gcal-events-url calendar-id event-id)
    (append (gcal-access-token-params) params) ))
 
-;;
+
 ;; Time Utilities
-;;
+
 ;; time = Emacs Internal Time
 ;;   (ex: (encode-time 0 0 0 31 4 2016) )
 ;; gtime = Google Calendar Time
 ;;   (ex: ('date . "2016-05-27") ('dateTime . "2016-05-27T12:34:00+09:00"))
 ;; datetime = RFC3339
 ;;   (ex: 2016-05-01T12:34:00+09:00)
-;;
 
 (defcustom gcal-time-zone-name-default nil
   "デフォルトのタイムゾーン名です。
@@ -460,8 +462,9 @@ IANA Time Zone Database nameで指定します(例:Asia/Tokyo)。
 
 ;; google => emacs
 
-;;(gcal-time-parse "2014-12-13T10:00:00+09:00")
-;;(gcal-time-parse "2015-03-06T15:42:32.354Z")
+;; (gcal-time-parse "2014-12-13T10:00:00+09:00")
+;; (gcal-time-parse "2015-03-06T15:42:32.354Z")
+
 (defun gcal-time-parse (str)
   (parse-iso8601-time-string str))
 
@@ -482,9 +485,8 @@ IANA Time Zone Database nameで指定します(例:Asia/Tokyo)。
         (if (stringp datetime)
             (gcal-time-parse datetime))))))
 
-;;
+
 ;; Utilities
-;;
 
 (defun gcal-get-error-code (response-json)
   (if (listp response-json)

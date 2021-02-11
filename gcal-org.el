@@ -23,17 +23,15 @@
 
 ;;; Commentary:
 
-;;
-;; (require 'gcal-org)
-;;
-;; (gcal-org-push-file "example@gmail.com" "~/my-schedule.org")
-;;
+;; To use this package, add below code in your init.el.
+
+;;   (require 'gcal-org)
+;;   (gcal-org-push-file "example@gmail.com" "~/my-schedule.org")
 
 ;;; Code:
 
 (require 'gcal)
 (require 'org-id)
-
 
 ;; gcal-id
 
@@ -147,9 +145,8 @@
                                       (= c ?-)))
                                 uuid))))))
 
-;;
+
 ;; gcal-oevent object
-;;
 
 (defun make-gcal-oevent (&rest args)
   (let (result)
@@ -205,15 +202,14 @@
           :key-type (choice string (const nil))
           :value-type string))
 
-;;
+
 ;; Parse org-mode document
-;;
 
 (defun gcal-org-parse-file (file)
   "指定されたファイルからイベントを集めます。
 
 すでに FILE を開いている場合はそのバッファから集めます。"
-  ;; @todo Use temporary buffer when not visiting file ?
+  ;; @todo Use temporary buffer when not visiting file?
   ;; (if-let ((buffer (get-file-buffer file)))
   ;;     (with-current-buffer buffer
   ;;       (gcal-org-parse-buffer))
@@ -278,7 +274,7 @@
                              :summary-prefix summary-prefix)))
 
           (when ts-prefix-allowed
-            (when (null same-entry-info)  ;; New ID found
+            (when (null same-entry-info)           ; New ID found
               (setq same-entry-info (list id nil))
               (push same-entry-info entries))
 
@@ -328,7 +324,7 @@ HEADER-MAXIMUMの深さまで、PATHをSEPARATORで繋げます。"
                                       (week . "WEEKLY")
                                       (month . "MONTHLY")
                                       (year . "YEARLY"))))))
-      ;;@todo check repeater-type? + 'cumulate ++ 'catch-up .+ 'restart
+      ;; @todo check repeater-type? + 'cumulate ++ 'catch-up .+ 'restart
       (if (and repeater-unit-str
                (>= repeater-value 1))
           (vector
@@ -338,9 +334,8 @@ HEADER-MAXIMUMの深さまで、PATHをSEPARATORで繋げます。"
     ;; Get from addtional properties
     (gcal-ts-get-additional-property ts :recurrence)))
 
-;;
+
 ;; Push org file to Google Calendar
-;;
 
 (defun gcal-org-push-file (calendar-id file &optional cache-file)
   (if cache-file
@@ -415,31 +410,29 @@ HEADER-MAXIMUMの深さまで、PATHをSEPARATORで繋げます。"
 
     calfile-cache))
 
-;;
 ;; Push list of org-mode events to Google Calendar
-;;
+
 ;; Usage:
 ;;  Upload:
 ;;   (setq my-schedule-pushed-oevents
 ;;     (gcal-org-push-oevents "example@gmail.com"
 ;;       (gcal-org-parse-file "~/my-schedule.org") nil))
-;;
+
 ;;   (gcal-oevents-save "~/my-schedule.gcal-cache" my-schedule-pushed-oevents)
-;;
+
 ;;  Upload delta:
 ;;   (gcal-org-push-oevents "example@gmail.com"
 ;;     (gcal-org-parse-file "~/my-schedule.org")
 ;;     (gcal-org-parse-file "~/my-schedule.org.old"))
-;;
+
 ;;   (gcal-org-push-oevents "example@gmail.com"
 ;;     (gcal-org-parse-file "~/my-schedule.org")
 ;;     (gcal-oevents-load "~/my-schedule.gcal-cache"))
-;;
+
 ;;  Delete:
 ;;   (gcal-org-push-oevents "example@gmail.com"
 ;;     nil
 ;;     (gcal-org-parse-file "~/my-schedule.org"))
-;;
 
 (defun gcal-org-push-oevents (calendar-id new-events old-events)
   "Send delta between old-events and new-events to calendar(calendar-id).
@@ -495,9 +488,8 @@ old-events will be destroyed."
         (setq res (gcal-oevent-update calendar-id new-oe))
       res)))
 
-;;
+
 ;; Pull oevents from Google Calendar
-;;
 
 (defun gcal-org-pull-oevents (calendar-id &optional params)
   "Download calendar events as list of gcal-oevent."
@@ -509,9 +501,8 @@ old-events will be destroyed."
        nil
        (mapcar #'gcal-oevent-from-gevent (cdr (assq 'items gevents)))))))
 
-;;
+
 ;; Pull events to file from Google Calendar
-;;
 
 ;; (defun gcal-org-pull-file (calendar-id file headline &optional params)
 ;;   (let ((oevents (gcal-org-pull-oevents calendar-id params)))
@@ -519,7 +510,6 @@ old-events will be destroyed."
 ;;     (if (gcal-failed-p oevents)
 ;;         (error ("error %s" oevents)))
 
-;;     ;;
 ;;     (save-window-excursion
 ;;       (save-excursion
 ;;         (set-buffer (find-file-noselect file))
@@ -663,6 +653,7 @@ old-events will be destroyed."
       ;; not found
       ret-if-failed)))
 
+
 ;; org内容変更
 
 (defun gcal-org-set-heading-text (text)
@@ -753,9 +744,8 @@ old-events will be destroyed."
           (gcal-ts-delete-additional-property ts-end :recurrence)
         (gcal-ts-set-additional-property ts-end :recurrence recurrence)))))
 
-;;
+
 ;; format oevent(oevent to org-mode text)
-;;
 
 (defcustom gcal-org-oevent-template
   "** %{summary}\n%{ts-prefix-colon}%{timestamp}%{unsupported-recurrence}\n:PROPERTIES:\n :ID: %{id}\n%{propname-location-br}:END:\n"
@@ -812,9 +802,8 @@ old-events will be destroyed."
       (forward-line)
       (insert string))))
 
-;;
+
 ;; Diff org-mode events
-;;
 
 (defun gcal-oevents-find (oevents id ord)
   (cl-find-if (lambda (oe) (and (equal (gcal-oevent-id oe) id)
@@ -863,9 +852,8 @@ old-events will be destroyed."
   (loop for old-oe in old-oevents
         do (funcall func-del old-oe)))
 
-;;
+
 ;; Difference between gevents
-;;
 
 (defun gcal-org-diff-gevents (old-gevent new-gevent)
   "OLD-GEVENTからNEW-GEVENTへの差分を抽出します。"
@@ -899,7 +887,7 @@ old-events will be destroyed."
          ((and (null old-value) (null new-value)) )
          ;; Added
          ((null old-value)
-          (push (cons name new-value) result)) ;; Push new-value
+          (push (cons name new-value) result)) ; Push new-value
          ;; Removed
          ((null new-value)
           ;; To remove property, set value to nil.
@@ -956,9 +944,8 @@ old-events will be destroyed."
 ;;   (private
 ;;    (gcalSummaryPrefix))))
 
-;;
+
 ;; Convert between oevent(Org-mode Event) and gevent(Google Calendar Event)
-;;
 
 (defcustom gcal-ts-prefix-created-on-google "SCHEDULED"
   "Google Calendarにおいて作成された予定をpullしたときに付ける接頭辞。"
@@ -1083,6 +1070,8 @@ GoogleカレンダーはFREQ=HOURLYをサポートしていないようです。
             ;; not string or not RRULE:
             t))
         recurrence)))
+
+
 ;; Convert event id
 
 (defun gcal-oevent-id-to-gevent-id (uuid)
@@ -1099,7 +1088,7 @@ base32hexへ変換します。"
   (let ((gid (gcal-oevent-id-to-gevent-id (gcal-oevent-id oevent)))
         (ord (gcal-oevent-ord oevent)))
     (if (= ord 0)
-        gid ;; 0のときはそのまま。代表ID。Google Calendarから取り込んだイベントは必ずこれ。
+        gid ; 0のときはそのまま。代表ID。Google Calendarから取り込んだイベントは必ずこれ。
       (format "%s%05d" gid ord))))
 
 (defun gcal-oevent-base32hex-uuid-p (id)
@@ -1148,9 +1137,8 @@ base32hexへ変換します。"
    (t
     (cons id 0))))
 
-;;
+
 ;; oevent event operation
-;;
 
 (defun gcal-oevent-insert (calendar-id oevent)
   (gcal-events-insert calendar-id (gcal-oevent-to-gevent oevent)))
@@ -1181,17 +1169,16 @@ base32hexへ変換します。"
   (loop for oevent in oevents
         do (gcal-oevent-delete calendar-id oevent)))
 
-;;
+
 ;; oevent timestamp representation
-;;
-;; (year month day hour minite)
-;;
-;; Examples:
-;;   (gcal-ts-to-time '(2016 5 27 nil nil)) => (22343 3952)
-;;   (gcal-ts-date-only '(2016 5 27 12 34)) => nil
-;;   (gcal-ts-inc '(2016 5 27 12 34)) => (2016 5 27 12 35)
-;;   (gcal-ts-to-gtime '(2016 5 27 12 34)) => ((dateTime . "2016-05-27T12:34:00+09:00") (date))
-;;
+
+;;   (year month day hour minite)
+
+;;   Examples:
+;;     (gcal-ts-to-time '(2016 5 27 nil nil)) => (22343 3952)
+;;     (gcal-ts-date-only '(2016 5 27 12 34)) => nil
+;;     (gcal-ts-inc '(2016 5 27 12 34)) => (2016 5 27 12 35)
+;;     (gcal-ts-to-gtime '(2016 5 27 12 34)) => ((dateTime . "2016-05-27T12:34:00+09:00") (date))
 
 (defun gcal-ts-to-time (ts)
   "Convert timestamp to emacs internal time."
@@ -1218,7 +1205,7 @@ base32hexへ変換します。"
 
 (defun gcal-ts-end-exclusive (_ts-start ts-end)
   "終了日がその日自身を含まないように補正します。"
-  (if (gcal-ts-date-only ts-end) ;;<2016-05-26 Thu>--<2016-05-27 Fri> => 28
+  (if (gcal-ts-date-only ts-end) ; <2016-05-26 Thu>--<2016-05-27 Fri> => 28
       (gcal-ts-inc ts-end)
     ;; <2016-05-26 Thu 15:00-15:00> ;; => 15:00 (not 15:01)
     ;; <2016-05-26 Thu 15:00-16:00> ;; => 16:00 (not 16:01)
@@ -1324,6 +1311,7 @@ base32hexへ変換します。"
                                        ("YEARLY" . "y"))))))
 
                   (concat " +" (or interval "1") repeater-suffix)))))))
+
 ;; (gcal-ts-repeater-from-recurrence ["RRULE:FREQ=DAILY;INTERVAL=2"]) => " +2d"
 
 (defun gcal-ts-supported-recurrence-p (recurrence)
@@ -1334,11 +1322,10 @@ RECURRENCEがnilの場合、リピーターがないタイムスタンプで表�
       (not (null (gcal-ts-repeater-from-recurrence recurrence)))
     t))
 
-;;
+
 ;; Timestamp Additional Properties
-;;
+
 ;; e.g. <2021-02-07 Sun>#(:recurrence ["RRULE:FREQ=WEEKLY;WKST=SU;BYDAY=FR,MO"])
-;;
 
 (defun gcal-ts-get-additional-properties-range (ts-end)
   "TS-ENDの直後にある#(で始まるリストとその範囲を返します。
