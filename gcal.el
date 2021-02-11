@@ -200,12 +200,12 @@ Optional:
       (let ((json-array-type 'list))
         (json-read-from-string (decode-coding-string body 'utf-8)))))))
 
-(defun gcal-retrieve-json (method url params &optional headers data)
+(defun gcal-retrieve-json (method url params &optional headers req-body)
   "Send HTTP request and return JSON object.
 
-See `gcal-http' for METHOD URL PARAMS HEADERS DATA docstring."
+See `gcal-http' for METHOD URL PARAMS HEADERS REQ-BODY docstring."
   (gcal-http-response-to-json
-   (gcal-http method url params headers data)))
+   (gcal-http method url params headers req-body)))
 
 (defun gcal-retrieve-json-get (url params)
   "Send HTTP GET request and return JSON object.
