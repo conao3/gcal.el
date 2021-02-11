@@ -448,11 +448,8 @@ Example:
 
 ;; google => emacs
 
-;; (gcal-time-parse "2014-12-13T10:00:00+09:00")
-;; (gcal-time-parse "2015-03-06T15:42:32.354Z")
-
-(defun gcal-time-parse (str)
-  (parse-iso8601-time-string str))
+;; (parse-iso8601-time-string "2014-12-13T10:00:00+09:00")
+;; (parse-iso8601-time-string "2015-03-06T15:42:32.354Z")
 
 (defun gcal-gtime-date-str (gtime)
   "ex: ((date . \"2016-05-28\")) => \"2016-05-28\" or nil"
@@ -469,7 +466,7 @@ Example:
           (encode-time 0 0 0 (nth 3 d)(nth 4 d)(nth 5 d)))
       (let ((datetime (gcal-gtime-date-time-str gtime)))
         (when (stringp datetime)
-          (gcal-time-parse datetime))))))
+          (parse-iso8601-time-string datetime))))))
 
 
 ;; Utilities
