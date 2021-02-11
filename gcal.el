@@ -229,7 +229,6 @@ Arguments:
     (setq token (gcal-oauth-auth auth-url token-url client-id client-secret scope))
     (gcal-oauth-save-token token-file token))
 
-  ;; return token
   token)
 
 (defun gcal-oauth-auth (auth-url token-url client-id client-secret scope)
