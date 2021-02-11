@@ -145,7 +145,7 @@
     (gcal-http-make-query params)))
 
 (defun gcal-http-post-json (url params json-obj &optional method)
-  "Send POST request(with json) to url."
+  "Send POST request (with PARAMS and JSON BODY) to URL."
   (gcal-http (or method "POST") url
     params
     '(("Content-Type" . "application/json"))
