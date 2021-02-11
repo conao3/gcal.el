@@ -177,7 +177,15 @@ Optional:
   HEADERS alist: Extra request headers
   REQ-BODY string: Request body"
   (declare (indent 2))
-  (let ((url-request-method method)
+  (let ((url-request-method
+         (cond
+          ((stringp method) method)
+          ((symbolp method)
+           (if (string= ":" (substring (symbol-name method) 1))
+               (upcase (substring (symbol-name method) 1))
+             (upcase (symbol-name method))))
+          (t
+           (error "Unknown type: %s" method))))
         (url-request-extra-headers headers)
         (url-request-data req-body))
     (with-current-buffer (url-retrieve-synchronously (gcal-http-make-query-url url params))
