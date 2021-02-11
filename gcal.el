@@ -60,7 +60,9 @@
 (require 'parse-time)
 
 (defgroup gcal nil
-  "Google Calendar Interface."
+  "Google Calendar Interface.
+
+Reference: https://developers.google.com/calendar/v3/reference"
   :group 'convenience
   :link '(url-link :tag "Github" "https://github.com/conao3/gcal.el"))
 
