@@ -58,13 +58,20 @@
 (require 'json)
 (require 'parse-time)
 
+(defgroup gcal nil
+  "Google Calendar Interface."
+  :group 'convenience
+  :link '(url-link :tag "Github" "https://github.com/conao3/gcal.el"))
+
 (defcustom gcal-client-id ""
-  "client-id for Google Calendar API"
-  :group 'gcal :type 'string)
+  "Google Calendar API client-id."
+  :group 'gcal
+  :type 'string)
 
 (defcustom gcal-client-secret ""
-  "client-secret for Google Calendar API"
-  :group 'gcal :type 'string)
+  "Google Calendar API client-secret."
+  :group 'gcal
+  :type 'string)
 
 (defconst gcal-auth-url "https://accounts.google.com/o/oauth2/auth")
 (defconst gcal-token-url "https://www.googleapis.com/oauth2/v3/token")
@@ -246,8 +253,7 @@ json-read-from-string)."
   "アクセストークンを取得します。JSONをリストへ変換したもので返します。"
   (gcal-retrieve-json-post-www-form
    token-url
-   `(
-     ("client_id" . ,client-id)
+   `(("client_id" . ,client-id)
      ("client_secret" . ,client-secret)
      ("redirect_uri" . "urn:ietf:wg:oauth:2.0:oob")
      ("grant_type" . "authorization_code")
@@ -268,8 +274,7 @@ json-read-from-string)."
   "リフレッシュされたアクセストークンを取得します。JSONをリストへ変換したもので返します。"
   (gcal-retrieve-json-post-www-form
    token-url
-   `(
-     ("client_id" . ,client-id)
+   `(("client_id" . ,client-id)
      ("client_secret" . ,client-secret)
      ("redirect_uri" . "urn:ietf:wg:oauth:2.0:oob")
      ("grant_type" . "refresh_token")
@@ -311,8 +316,7 @@ json-read-from-string)."
   (gcal-oauth-token-access gcal-access-token))
 
 (defun gcal-access-token-params ()
-  `(
-    ("access_token" . ,(gcal-access-token))))
+  `(("access_token" . ,(gcal-access-token))))
 
 
 ;; API URL Builder
