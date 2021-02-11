@@ -144,12 +144,12 @@
     '(("Content-Type" . "application/x-www-form-urlencoded"))
     (gcal-http-make-query params)))
 
-(defun gcal-http-post-json (url params json-obj &optional method)
+(defun gcal-http-post-json (url params json &optional method)
   "Send POST request (with PARAMS and JSON BODY) to URL."
   (gcal-http (or method "POST") url
     params
     '(("Content-Type" . "application/json"))
-    (encode-coding-string (json-encode json-obj) 'utf-8)))
+    (encode-coding-string (json-encode json) 'utf-8)))
 
 (defun gcal-retrieve-json (method url params &optional headers data)
   "Send HTTP request and return parsed JSON object."
