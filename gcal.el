@@ -121,17 +121,17 @@ Like xxxxxxxxxxxxxxxxxxxxxxxx"
 
       (list code status (nreverse headers) body))))
 
-(defun gcal-http-make-query (params)
+(defun gcal-http-make-query-string (params)
   "Build query string from PARAMS.
 
 Example:
-  (gcal-http-make-query '((\"a\" . \"b\") (\"c\" . \"d\")))
+  (gcal-http-make-query-string '((\"a\" . \"b\") (\"c\" . \"d\")))
   ;;=> \"a=b&c=d\"
 
-  (gcal-http-make-query '((a . \"b\") (c . \"d\")))
+  (gcal-http-make-query-string '((a . \"b\") (c . \"d\")))
   ;;=> \"a=b&c=d\"
 
-  (gcal-http-make-query '((a . \"b\") (c . (\"d\" \"e\"))))
+  (gcal-http-make-query-string '((a . \"b\") (c . (\"d\" \"e\"))))
   ;;=> \"a=b&c=d&c=e\""
   (cl-flet ((concat-args
              (elm)
@@ -149,7 +149,7 @@ Example:
 
 (defun gcal-http-make-query-url (url params)
   "Build URL with query PARAMS."
-  (let ((query (gcal-http-make-query params)))
+  (let ((query (gcal-http-make-query-string params)))
     (if (> (length query) 0)
         (concat url "?" query)
       url)))
@@ -172,7 +172,7 @@ Example:
   (gcal-http "POST" url
     nil
     '(("Content-Type" . "application/x-www-form-urlencoded"))
-    (gcal-http-make-query params)))
+    (gcal-http-make-query-string params)))
 
 (defun gcal-http-post-json (url params json &optional method)
   "Send POST request (with PARAMS and JSON BODY) to URL."
