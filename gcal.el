@@ -312,7 +312,7 @@ See `gcal-oauth-get' for TOKEN-URL CLIENT-ID CLIENT-SECRET."
     (insert (pp-to-string token))))
 
 (defun gcal-oauth-load-token (file)
-  "Load token from FILE."
+  "Load token from FILE, return `gcal-oauth-token'."
   (ignore-errors
     (read
      (with-temp-buffer
