@@ -102,7 +102,7 @@
         (list status message headers body)))))
 
 (defun gcal-http-make-query (params)
-  "Build query string. (ex: a=1&b=2&c=3)"
+  "Build query string from PARAMS."
   (mapconcat
    (lambda (kv)
      (let* ((key (car kv))
