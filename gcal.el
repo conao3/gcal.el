@@ -136,7 +136,7 @@ Example:
     (let (code status headers body)
       ;; HTTP/1.1 200 OK
       (looking-at "^HTTP/[^ ]+ \\([0-9]+\\) ?\\(.*\\)$")
-      (setq code (match-string 1))
+      (setq code (string-to-number (match-string 1)))
       (setq status (match-string 2))
 
       ;; headers
