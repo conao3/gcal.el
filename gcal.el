@@ -124,7 +124,7 @@
         (concat url "?" query)
       url)))
 
-(defun gcal-http (method url params headers data)
+(defun gcal-http (method url &optional params headers data)
   "Request URL via METHOD with PARAMS HEADERS DATA and parse response."
   (let ((url-request-method method)
         (url-request-extra-headers headers)
@@ -134,7 +134,7 @@
 
 (defun gcal-http-get (url params)
   "Send GET request to URL with PARAMS."
-  (gcal-http "GET" url params nil nil))
+  (gcal-http "GET" url params))
 
 (defun gcal-http-post-www-form (url params)
   "Send POST request(with x-www-form-url-encoded parms) to url."
