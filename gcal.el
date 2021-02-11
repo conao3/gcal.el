@@ -79,16 +79,9 @@
 
 ;; HTTP
 
-(defun gcal-http (method url params headers data)
-  (let ((url-request-method (or method "GET"))
-        (url-request-extra-headers headers)
-        (url-request-data data))
-    (gcal-parse-http-response
-     (url-retrieve-synchronously (gcal-http-make-query-url url params)))))
-
-(defun gcal-parse-http-response (buffer)
-  "Parse HTTP response in buffer."
-  (with-current-buffer buffer
+(defun gcal-parse-http-response (buf)
+  "Parse HTTP response BUF."
+  (with-current-buffer buf
     ;; Response Line (ex: HTTP/1.1 200 OK)
     (goto-char (point-min))
     (if (looking-at "^HTTP/[^ ]+ \\([0-9]+\\) ?\\(.*\\)$")
@@ -112,6 +105,13 @@
           ;; (push (cons ":Status" status) headers)
           ;; (push (cons ":Message" message) headers)
           (list status message headers body)))))
+
+(defun gcal-http (method url params headers data)
+  (let ((url-request-method (or method "GET"))
+        (url-request-extra-headers headers)
+        (url-request-data data))
+    (gcal-parse-http-response
+     (url-retrieve-synchronously (gcal-http-make-query-url url params)))))
 
 (defun gcal-http-get (url params)
   "Send GET request to url with params as query parameter."
