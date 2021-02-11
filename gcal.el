@@ -126,6 +126,7 @@
 
 (defun gcal-http (method url &optional params headers data)
   "Request URL via METHOD with PARAMS HEADERS DATA and parse response."
+  (declare (indent 2))
   (let ((url-request-method method)
         (url-request-extra-headers headers)
         (url-request-data data))
@@ -138,15 +139,17 @@
 
 (defun gcal-http-post-www-form (url params)
   "Send POST request (with x-www-form-url-encoded PARAMS) to URL."
-  (gcal-http "POST" url nil
-             '(("Content-Type" . "application/x-www-form-urlencoded"))
-             (gcal-http-make-query params)))
+  (gcal-http "POST" url
+    nil
+    '(("Content-Type" . "application/x-www-form-urlencoded"))
+    (gcal-http-make-query params)))
 
 (defun gcal-http-post-json (url params json-obj &optional method)
   "Send POST request(with json) to url."
-  (gcal-http (or method "POST") url params
-             '(("Content-Type" . "application/json"))
-             (encode-coding-string (json-encode json-obj) 'utf-8)))
+  (gcal-http (or method "POST") url
+    params
+    '(("Content-Type" . "application/json"))
+    (encode-coding-string (json-encode json-obj) 'utf-8)))
 
 (defun gcal-retrieve-json (method url params &optional headers data)
   "Send HTTP request and return parsed JSON object."
