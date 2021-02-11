@@ -208,7 +208,7 @@ See `gcal-http' for URL PARAMS METHOD docstring."
 
 ;; (この部分は一応Google Calendar以外でも使い回せるように作っています)
 
-;; Example: (setq token (gcal-oauth-get nil "https://accounts.google.com/o/oauth2/auth" "https://www.googleapis.com/oauth2/v3/token" "xxx.apps.googleusercontent.com" "secret_xxx" "https://www.googleapis.com/auth/calendar"))
+;; Example: (setq token (gcal-oauth-token nil "https://accounts.google.com/o/oauth2/auth" "https://www.googleapis.com/oauth2/v3/token" "xxx.apps.googleusercontent.com" "secret_xxx" "https://www.googleapis.com/auth/calendar"))
 ;; Example: (gcal-oauth-token-access token)
 ;; Example: (gcal-oauth-token-expires token)
 ;; Example: (gcal-oauth-token-refresh token)
@@ -282,7 +282,7 @@ See `gcal-http' for URL PARAMS METHOD docstring."
        (insert-file-contents file)
        (buffer-string)))))
 
-(defun gcal-oauth-get (token auth-url token-url client-id client-secret scope token-file)
+(defun gcal-oauth-token (token auth-url token-url client-id client-secret scope token-file)
   "Get oauth token.
 
 Arguments:
@@ -302,13 +302,13 @@ Arguments:
 
 (defun gcal-access-token ()
   (setq gcal-access-token
-        (gcal-oauth-get gcal-access-token
-                        gcal-auth-url
-                        gcal-token-url
-                        gcal-client-id
-                        gcal-client-secret
-                        gcal-scope-url
-                        gcal-token-file))
+        (gcal-oauth-token gcal-access-token
+                          gcal-auth-url
+                          gcal-token-url
+                          gcal-client-id
+                          gcal-client-secret
+                          gcal-scope-url
+                          gcal-token-file))
   (gcal-oauth-token-access gcal-access-token))
 
 (defun gcal-access-token-params ()
