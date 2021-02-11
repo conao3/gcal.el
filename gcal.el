@@ -335,18 +335,18 @@ Arguments:
 
 ;;;; Google Calendar OAuth
 
-(defvar gcal-access-token nil)
+(defvar gcal-oauth-token nil)
 
 (defun gcal-access-token ()
-  (setq gcal-access-token
-        (gcal-oauth-token gcal-access-token
+  (setq gcal-oauth-token
+        (gcal-oauth-token gcal-oauth-token
                           gcal-auth-url
                           gcal-token-url
                           gcal-client-id
                           gcal-client-secret
                           gcal-scope-url
                           gcal-token-file))
-  (gcal-oauth-token-access gcal-access-token))
+  (gcal-oauth-token-access gcal-oauth-token))
 
 (defun gcal-access-token-params ()
   `(("access_token" . ,(gcal-access-token))))
