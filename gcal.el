@@ -216,7 +216,10 @@ See `gcal-http' for URL PARAMS METHOD docstring."
 ;; Example: (gcal-oauth-auth "https://accounts.google.com/o/oauth2/auth" "https://www.googleapis.com/oauth2/v3/token" "xxx.apps.googleusercontent.com" "secret_xxx" "https://www.googleapis.com/auth/calendar"))
 ;; Example: (gcal-oauth-refresh token "xxxx" "xxxx")
 
-(cl-defstruct gcal-oauth-token access expires refresh url)
+(cl-defstruct (gcal-oauth-token
+               (:constructor gcal-oauth-token-new)
+               (:copier nil))
+  access expires refresh url)
 
 (defun gcal-oauth-get-access-token (auth-url token-url client-id client-secret scope)
   "Get access-token."
@@ -250,7 +253,7 @@ See `gcal-http' for URL PARAMS METHOD docstring."
   "Get access-token"
   (let ((result (gcal-oauth-get-access-token auth-url token-url client-id client-secret scope)))
     (let-alist result
-      (make-gcal-oauth-token
+      (gcal-oauth-token-new
        :access .access_token
        :expires (time-add (current-time) (seconds-to-time .expires_in))
        :refresh .refreshtoken
