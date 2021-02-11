@@ -104,9 +104,9 @@
 (defun gcal-http-make-query (params)
   "Build query string from PARAMS."
   (mapconcat
-   (lambda (kv)
-     (let ((key (car kv))
-           (v (cdr kv)))
+   (lambda (elm)
+     (let ((key (car elm))
+           (v (cdr elm)))
        (mapconcat
         (lambda (value)
           (format "%s=%s"
