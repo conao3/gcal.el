@@ -359,23 +359,25 @@ Arguments:
 (defconst gcal-calendar-url "https://www.googleapis.com/calendar/v3")
 
 (defun gcal-calendar-list-url (&optional calendar-id)
+  "Build URL from CALENDAR-ID."
   (concat
    gcal-calendar-url
    "/users/me/calendarList"
    (when calendar-id (concat "/" calendar-id))))
 
-(defun gcal-calendars-url (&optional calendar-id suffix)
+(defun gcal-calendars-url (&optional calendar-id &rest suffix)
+  "Build API URL from CALENDAR-ID, SUFFIX."
   (concat
    gcal-calendar-url
    "/calendars"
    (when calendar-id (concat "/" calendar-id))
-   (when suffix (concat "/" suffix))))
+   (when suffix (concat "/" (mapconcat 'identity suffix "/")))))
 
-(defun gcal-events-url (calendar-id &optional suffix1 suffix2)
+(defun gcal-events-url (calendar-id &optional &rest suffix)
+  "Build API URL from CALENDAR-ID, SUFFIX."
   (concat
    (gcal-calendars-url calendar-id "events")
-   (when suffix1 (concat "/" suffix1))
-   (when suffix2 (concat "/" suffix2))))
+   (when suffix (concat "/" (mapconcat 'identity suffix "/")))))
 
 
 ;;;; API Wrapper
