@@ -204,6 +204,7 @@ Optional:
   "Send HTTP request and return JSON object.
 
 See `gcal-http' for METHOD URL PARAMS HEADERS REQ-BODY docstring."
+  (declare (indent 2))
   (gcal-http-response-to-json
    (gcal-http method url params headers req-body)))
 
