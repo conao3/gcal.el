@@ -154,7 +154,7 @@ Example:
 
       (list code status (nreverse headers) body))))
 
-(defun gcal-http (method url &optional params headers req-body)
+(defun gcal-http-request (method url &optional params headers req-body)
   "Request URL via METHOD and parse response.
 
 Optional:
@@ -174,12 +174,12 @@ Optional:
 (defun gcal-http-get (url params)
   "Send GET request to URL with PARAMS."
   (declare (indent 1))
-  (gcal-http "GET" url params))
+  (gcal-http-request "GET" url params))
 
 (defun gcal-http-post-json (url params json)
   "Send POST request (with PARAMS and JSON BODY) to URL."
   (declare (indent 1))
-  (gcal-http "POST" url
+  (gcal-http-request "POST" url
     params
     '(("Content-Type" . "application/json"))
     (encode-coding-string (json-encode json) 'utf-8)))
@@ -187,7 +187,7 @@ Optional:
 (defun gcal-http-request-json (method url params json)
   "Send request via METHOD (with PARAMS and JSON BODY) to URL."
   (declare (indent 2))
-  (gcal-http method url
+  (gcal-http-request method url
     params
     '(("Content-Type" . "application/json"))
     (encode-coding-string (json-encode json) 'utf-8)))
@@ -195,7 +195,7 @@ Optional:
 (defun gcal-http-post-www-form (url params)
   "Send POST request (with x-www-form-url-encoded PARAMS) to URL."
   (declare (indent 1))
-  (gcal-http "POST" url
+  (gcal-http-request "POST" url
     nil
     '(("Content-Type" . "application/x-www-form-urlencoded"))
     (gcal-http-make-query-string params)))
@@ -212,13 +212,13 @@ Optional:
       (let ((json-array-type 'list))
         (json-read-from-string (decode-coding-string body 'utf-8)))))))
 
-(defun gcal-retrieve-json (method url params &optional headers req-body)
+(defun gcal-retrieve-json-request (method url params &optional headers req-body)
   "Send HTTP request and return JSON object.
 
 See `gcal-http' for METHOD URL PARAMS HEADERS REQ-BODY docstring."
   (declare (indent 2))
   (gcal-http-response-to-json
-   (gcal-http method url params headers req-body)))
+   (gcal-http-request method url params headers req-body)))
 
 (defun gcal-retrieve-json-get (url params)
   "Send HTTP GET request and return JSON object.
@@ -434,7 +434,7 @@ Example:
 
 (defun gcal-events-delete (calendar-id event-id &optional params)
   "Events: delete"
-  (gcal-retrieve-json
+  (gcal-retrieve-json-request
       "DELETE" (gcal-events-url calendar-id event-id)
     (append (gcal-access-token-params) params)))
 
