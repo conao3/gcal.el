@@ -84,23 +84,24 @@
   (with-current-buffer buf
     ;; Response Line (ex: HTTP/1.1 200 OK)
     (goto-char (point-min))
-    (if (looking-at "^HTTP/[^ ]+ \\([0-9]+\\) ?\\(.*\\)$")
-        (let ((status (string-to-number (match-string 1)))
-              (message (match-string 2))
-              (headers)
-              (body))
-          (forward-line)
-          ;; Header Lines
-          (while (not (eolp))
-            (if (looking-at "^\\([^:]+\\): \\(.*\\)$")
-                (push `((match-string 1) . (match-string 2)) headers))
-            (forward-line))
+    (when (looking-at "^HTTP/[^ ]+ \\([0-9]+\\) ?\\(.*\\)$")
+      (let ((status (string-to-number (match-string 1)))
+            (message (match-string 2))
+            (headers)
+            (body))
+        (forward-line)
 
-          ;; Body
-          (forward-line)
-          (setq body (buffer-substring (point) (point-max)))
+        ;; Header Lines
+        (while (not (eolp))
+          (when (looking-at "^\\([^:]+\\): \\(.*\\)$")
+            (push `((match-string 1) . (match-string 2)) headers))
+          (forward-line))
 
-          (list status message headers body)))))
+        ;; Body
+        (forward-line)
+        (setq body (buffer-substring (point) (point-max)))
+
+        (list status message headers body)))))
 
 (defun gcal-http (method url params headers data)
   (let ((url-request-method (or method "GET"))
