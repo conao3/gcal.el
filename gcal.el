@@ -137,7 +137,7 @@
   (gcal-http "GET" url params))
 
 (defun gcal-http-post-www-form (url params)
-  "Send POST request(with x-www-form-url-encoded parms) to url."
+  "Send POST request (with x-www-form-url-encoded PARAMS) to URL."
   (gcal-http "POST" url nil
              '(("Content-Type" . "application/x-www-form-urlencoded"))
              (gcal-http-make-query params)))
