@@ -153,8 +153,8 @@
 
 (defun gcal-http-response-to-json (response)
   "Convert HTTP RESPONSE to parsed JSON object."
-  (let* ((status (nth 0 response))
-         (body (nth 3 response)))
+  (let ((status (nth 0 response))
+        (body (nth 3 response)))
     ;; @todo check status
     (cond
      ((= status 204) nil) ; empty result
