@@ -261,11 +261,11 @@ See `gcal-http' for URL PARAMS METHOD docstring."
     (pp token (current-buffer))))
 
 (defun gcal-oauth-load-token (file)
-  (if (and file (file-exists-p file))
-      (ignore-errors
-        (with-temp-buffer
-          (insert-file-contents file)
-          (read (buffer-string))))))
+  (ignore-errors
+    (read
+     (with-temp-buffer
+       (insert-file-contents file)
+       (buffer-string)))))
 
 (defun gcal-oauth-get (token auth-url token-url client-id client-secret scope token-file)
   "Get oauth token.
