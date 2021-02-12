@@ -181,7 +181,7 @@ Optional:
          (cond
           ((stringp method) method)
           ((symbolp method)
-           (if (string= ":" (substring (symbol-name method) 1))
+           (if (keywordp method)
                (upcase (substring (symbol-name method) 1))
              (upcase (symbol-name method))))
           (t
