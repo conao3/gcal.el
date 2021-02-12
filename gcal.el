@@ -275,7 +275,8 @@ Argumemnts:
   "Refresh TOKEN, return `gcal-oauth-token'.
 
 See `gcal-oauth-get' for TOKEN-URL CLIENT-ID CLIENT-SECRET."
-  (when token
+  (when (and token
+             (time-less-p (gcal-oauth-token-expires token) (current-time)))
     (let ((result (gcal-retrieve-json-post-www-form token-url
                     `(("client_id" . ,client-id)
                       ("client_secret" . ,client-secret)
