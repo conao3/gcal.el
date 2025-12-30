@@ -1,5 +1,5 @@
 #+TITLE: gcal.el
-#+AUTHOR: AKIYAMA Kouhei
+#+AUTHOR: conao3
 
 Google Calendar API client for Emacs.
 
