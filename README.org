@@ -1,89 +1,157 @@
-* Google Calendar Utilities for Emacs
-** gcal.el
+#+TITLE: gcal.el
+#+AUTHOR: AKIYAMA Kouhei
 
-Settings:
+Google Calendar API client for Emacs.
+
+Interact with Google Calendar directly from Emacs. List calendars, query events, create new entries, and synchronize your org-mode schedule with Google Calendar.
+
+* Features
+
+- Full Google Calendar API access via OAuth 2.0
+- List, create, update, and delete calendar events
+- Bidirectional sync between org-mode files and Google Calendar
+- Time zone support
+- Delta synchronization for efficient updates
+
+* Requirements
+
+- Emacs 26.1 or later
+- Google Cloud Platform project with Calendar API enabled
+
+* Installation
+
+Clone this repository and add it to your load path:
 
 #+BEGIN_SRC elisp
-;; Get from Google Developer Console
-(setq gcal-client-id "xxxxxxxxx.apps.googleusercontent.com")
-(setq gcal-client-secret "xxxx-XxxxXxxXXXxx") ;;API-KEY
+(add-to-list 'load-path "/path/to/gcal.el")
+(require 'gcal)
 #+END_SRC
 
-Usege:
+* Configuration
+
+** Google API Credentials
+
+1. Go to the [[https://console.developers.google.com/][Google Cloud Console]]
+2. Create a new project or select an existing one
+3. Enable the Google Calendar API
+4. Create OAuth 2.0 credentials (Desktop application)
+5. Configure the client ID and secret:
+
+#+BEGIN_SRC elisp
+(setq gcal-client-id "YOUR_CLIENT_ID.apps.googleusercontent.com")
+(setq gcal-client-secret "YOUR_CLIENT_SECRET")
+#+END_SRC
+
+** Time Zone
+
+Set your default time zone (IANA format):
+
+#+BEGIN_SRC elisp
+(setq gcal-default-time-zone "America/New_York")
+#+END_SRC
+
+* Usage
+
+** Basic Calendar Operations
 
 #+BEGIN_SRC elisp
 (require 'gcal)
 
-;; list my calendars
-(gcal-calendar-list-list) ;; Calendar List
+;; List all your calendars
+(gcal-calendar-list-list)
 
-;; list events
+;; List events from a specific calendar
 (gcal-events-list
- "example@gmail.com" ;;<- calendar-id
-  `((timeMin . ,(gcal-datetime 2016 5 1))
-    (timeMax . ,(gcal-datetime 2016 6 1))))
+ "your-email@gmail.com"
+ `((timeMin . ,(gcal-datetime 2024 1 1))
+   (timeMax . ,(gcal-datetime 2024 2 1))))
 
-;; insert event
+;; Create a new event
 (gcal-events-insert
- "example@gmail.com"
- `((start . ,(gcal-gtime 2016 5 27))
-   (end . ,(gcal-gtime 2016 5 28))
-  (summary . "My Special Holiday")))
+ "your-email@gmail.com"
+ `((start . ,(gcal-gtime 2024 1 15))
+   (end . ,(gcal-gtime 2024 1 16))
+   (summary . "Team Meeting")))
 
-;; delete event
-(gcal-events-delete "example@gmail.com" "{event id}")
+;; Delete an event
+(gcal-events-delete "your-email@gmail.com" "event-id")
 #+END_SRC
 
-** gcal-org.el
+** Org-mode Integration
 
-Usage:
+Synchronize your org files with Google Calendar:
 
 #+BEGIN_SRC elisp
 (require 'gcal-org)
 
-;; Org to Google Calendar
-(gcal-org-push-file "example@gmail.com" "~/my-schedule.org") ;;use global cache file(~/.emacs.d/.gcal-org-pushed-events)
+;; Push an org file to Google Calendar
+(gcal-org-push-file "your-email@gmail.com" "~/schedule.org")
 
-(gcal-org-push-file "example@gmail.com" "~/my-schedule.org" "~/my-schedule.gcal-cache")
+;; With custom cache file
+(gcal-org-push-file "your-email@gmail.com" "~/schedule.org" "~/schedule.gcal-cache")
 #+END_SRC
 
-Parse org & Upload
+** Parsing and Uploading Events
 
 #+BEGIN_SRC elisp
-;; Org to oevent(org-mode event)
-(gcal-org-parse-buffer) ;; Parse current buffer. Return a list of gcal-org-event object(including properties :id, :ord, :summary, :location, :ts-start, :ts-end, :ts-prefx, ...).
+;; Parse org buffer for events
+(gcal-org-parse-buffer)
 
-(gcal-org-parse-file "~/my-schedule.org") ;; Parse specified org file.
+;; Parse a specific org file
+(gcal-org-parse-file "~/schedule.org")
 
-;; Upload oevents to Google Calendar
+;; Upload events to Google Calendar
 (gcal-org-push-oevents
-  "example@gmail.com"
-  (gcal-org-parse-file "~/my-schedule.org")
-  nil)
+ "your-email@gmail.com"
+ (gcal-org-parse-file "~/schedule.org")
+ nil)
 
-;; Upload oevents to Google Calendar (delta)
+;; Delta upload (only changes)
 (gcal-org-push-oevents
-  "example@gmail.com"
-  (gcal-org-parse-file "~/my-schedule.org")
-  (gcal-org-parse-file "~/my-schedule.org.old"))
+ "your-email@gmail.com"
+ (gcal-org-parse-file "~/schedule.org")
+ (gcal-org-parse-file "~/schedule.org.old"))
 
 ;; Delete events from Google Calendar
 (gcal-org-push-oevents
-  "example@gmail.com"
-  nil
-  (gcal-org-parse-file "~/my-schedule.org"))
-
+ "your-email@gmail.com"
+ nil
+ (gcal-org-parse-file "~/schedule.org"))
 #+END_SRC
 
-Download
+** Downloading Events
 
 #+BEGIN_SRC elisp
-;; Download oevents from Goole Calendar
+;; Download events from Google Calendar
 (gcal-org-pull-oevents
- "example@gmail.com"
- `((timeMin . ,(gcal-time-format (current-time) nil)))) ;;after current time
-
+ "your-email@gmail.com"
+ `((timeMin . ,(gcal-time-format (current-time) nil))))
 #+END_SRC
-** Documents
-- [[http://misohena.jp/blog/2016-05-26-access-google-calendar-api-from-emacs.html][About gcal.el]]
-- [[http://misohena.jp/blog/2016-05-29-sync-events-between-google-calendar-and-org-mode.html][About gcal-org.el]]
+
+* API Reference
+
+| Function                  | Description                    |
+|---------------------------+--------------------------------|
+| =gcal-calendar-list-list= | List all calendars             |
+| =gcal-events-list=        | List events from a calendar    |
+| =gcal-events-get=         | Get a specific event           |
+| =gcal-events-insert=      | Create a new event             |
+| =gcal-events-update=      | Update an existing event       |
+| =gcal-events-patch=       | Partially update an event      |
+| =gcal-events-delete=      | Delete an event                |
+| =gcal-events-quick-add=   | Quick add event from text      |
+| =gcal-org-push-file=      | Sync org file to calendar      |
+| =gcal-org-parse-buffer=   | Parse current buffer for events|
+| =gcal-org-parse-file=     | Parse org file for events      |
+| =gcal-org-push-oevents=   | Upload parsed events           |
+| =gcal-org-pull-oevents=   | Download events from calendar  |
+
+* Further Reading
+
+- [[http://misohena.jp/blog/2016-05-26-access-google-calendar-api-from-emacs.html][About gcal.el]] (Japanese)
+- [[http://misohena.jp/blog/2016-05-29-sync-events-between-google-calendar-and-org-mode.html][About gcal-org.el]] (Japanese)
+- [[https://developers.google.com/calendar/v3/reference][Google Calendar API Reference]]
+
+* License
+
+GPL-3.0-or-later
